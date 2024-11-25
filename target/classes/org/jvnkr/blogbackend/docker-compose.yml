@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: blogapp-postgres
+    environment:
+      POSTGRES_DB: blogapp
+      POSTGRES_USER: jovan
+      POSTGRES_PASSWORD: jovan123
+    ports:
+      - "5431:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

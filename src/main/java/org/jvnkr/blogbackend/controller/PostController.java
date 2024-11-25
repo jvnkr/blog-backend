@@ -1,0 +1,82 @@
+package org.jvnkr.blogbackend.controller;
+
+import lombok.AllArgsConstructor;
+import org.jvnkr.blogbackend.dto.PageNumberDto;
+import org.jvnkr.blogbackend.dto.PostDto;
+import org.jvnkr.blogbackend.security.CustomUserDetails;
+import org.jvnkr.blogbackend.service.PostService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+@AllArgsConstructor
+@RestController
+@RequestMapping("/api/v1/posts")
+public class PostController {
+  private final PostService postService;
+  final int GLOBAL_BATCH_SIZE = 10;
+
+  @PreAuthorize("hasAnyRole('USER','ADMIN')")
+  @PostMapping
+  public ResponseEntity<String> createPost(@RequestBody PostDto postDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    return ResponseEntity.status(HttpStatus.CREATED)
+            .body(postService.createPost(postDto.getTitle(), postDto.getDescription(), customUserDetails.getUserId()));
+  }
+
+  @GetMapping
+  public ResponseEntity<List<PostDto>> getAllPosts() {
+    return ResponseEntity.status(HttpStatus.OK).body(postService.getAllPosts());
+  }
+
+  @PreAuthorize("hasAnyRole('USER','ADMIN')")
+  @GetMapping("/{postId}")
+  public ResponseEntity<PostDto> getPostById(@PathVariable UUID postId) {
+    return ResponseEntity.status(HttpStatus.OK).body(postService.getPostById(postId));
+  }
+
+  @PostMapping("/batch")
+  public ResponseEntity<List<PostDto>> getAllBatchedPosts(@RequestBody PageNumberDto pageNumberDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    UUID viewerId = customUserDetails != null ? customUserDetails.getUserId() : null;
+    return ResponseEntity.status(HttpStatus.OK).body(postService.getBatchOfAllPosts(pageNumberDto.getPageNumber(), GLOBAL_BATCH_SIZE, viewerId));
+  }
+
+  @PreAuthorize("hasAnyRole('USER','ADMIN')")
+  @PostMapping("/batch/{userId}")
+  public ResponseEntity<List<PostDto>> getUserBatchedPosts(@PathVariable UUID userId, @RequestBody PageNumberDto pageNumberDto, @AuthenticationPrincipal Optional<CustomUserDetails> customUserDetails) {
+    UUID viewerId = null;
+    if (customUserDetails != null) viewerId = customUserDetails.map(CustomUserDetails::getUserId).orElse(null);
+    return ResponseEntity.status(HttpStatus.OK).body(postService.getBatchOfUserPosts(userId, pageNumberDto.getPageNumber(), GLOBAL_BATCH_SIZE, viewerId));
+  }
+
+  @PreAuthorize("hasAnyRole('USER','ADMIN')")
+  @PutMapping("/{postId}")
+  public ResponseEntity<String> updatePost(@PathVariable UUID postId, @RequestBody PostDto postDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    return ResponseEntity.status(HttpStatus.OK).body(postService.updatePost(postId, customUserDetails.getUserId(), postDto.getTitle(), postDto.getDescription()));
+  }
+
+  @PreAuthorize("hasAnyRole('USER','ADMIN')")
+  @DeleteMapping("/{postId}")
+  public ResponseEntity<String> deletePost(@PathVariable UUID postId, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    return ResponseEntity.status(HttpStatus.OK).body(postService.deletePost(postId, customUserDetails.getUserId()));
+  }
+
+  @PreAuthorize("hasAnyRole('USER','ADMIN')")
+  @PostMapping("/like/{postId}")
+  public ResponseEntity<Boolean> likePost(@PathVariable UUID postId, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    return ResponseEntity.status(HttpStatus.OK).body(postService.likePost(postId, customUserDetails.getUserId()));
+  }
+
+
+  @PreAuthorize("hasAnyRole('USER','ADMIN')")
+  @PostMapping("/unlike/{postId}")
+  public ResponseEntity<Boolean> unlikePost(@PathVariable UUID postId, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    return ResponseEntity.status(HttpStatus.OK).body(postService.unlikePost(postId, customUserDetails.getUserId()));
+  }
+
+}

@@ -1,0 +1,29 @@
+{
+  "properties": [
+    {
+      "name": "app.jwt-access-expiration-milliseconds",
+      "type": "java.lang.Long",
+      "description": "Access token expiration."
+    },
+    {
+      "name": "app.jwt-secret",
+      "type": "java.lang.String",
+      "description": "JWT Secret Key."
+    },
+    {
+      "name": "app.jwt-refresh-expiration-milliseconds",
+      "type": "java.lang.Long",
+      "description": "Refresh token expiration."
+    },
+    {
+      "name": "app.resend-api-key",
+      "type": "java.lang.String",
+      "description": "API Key for the Resend email app."
+    },
+    {
+      "name": "app.jwt-verify-expiration-milliseconds",
+      "type": "java.lang.Long",
+      "description": "Verify token expiration."
+    }
+  ]
+}
