@@ -24,7 +24,7 @@ public class PostController {
 
   @PreAuthorize("hasAnyRole('USER','ADMIN')")
   @PostMapping
-  public ResponseEntity<String> createPost(@RequestBody PostDto postDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+  public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
     return ResponseEntity.status(HttpStatus.CREATED)
             .body(postService.createPost(postDto.getTitle(), postDto.getDescription(), customUserDetails.getUserId()));
   }
@@ -50,7 +50,7 @@ public class PostController {
   @PostMapping("/batch/{userId}")
   public ResponseEntity<List<PostDto>> getUserBatchedPosts(@PathVariable UUID userId, @RequestBody PageNumberDto pageNumberDto, @AuthenticationPrincipal Optional<CustomUserDetails> customUserDetails) {
     UUID viewerId = null;
-    if (customUserDetails != null) viewerId = customUserDetails.map(CustomUserDetails::getUserId).orElse(null);
+    if (customUserDetails.isPresent()) viewerId = customUserDetails.map(CustomUserDetails::getUserId).orElse(null);
     return ResponseEntity.status(HttpStatus.OK).body(postService.getBatchOfUserPosts(userId, pageNumberDto.getPageNumber(), GLOBAL_BATCH_SIZE, viewerId));
   }
 
@@ -62,8 +62,9 @@ public class PostController {
 
   @PreAuthorize("hasAnyRole('USER','ADMIN')")
   @DeleteMapping("/{postId}")
-  public ResponseEntity<String> deletePost(@PathVariable UUID postId, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-    return ResponseEntity.status(HttpStatus.OK).body(postService.deletePost(postId, customUserDetails.getUserId()));
+  public ResponseEntity<Void> deletePost(@PathVariable UUID postId, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    postService.deletePost(postId, customUserDetails.getUserId());
+    return ResponseEntity.status(HttpStatus.CREATED).body(null);
   }
 
   @PreAuthorize("hasAnyRole('USER','ADMIN')")

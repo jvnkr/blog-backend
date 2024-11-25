@@ -15,7 +15,8 @@ public class PostMapper {
             new PostAuthorDto(
                     postAuthor.getId(),
                     postAuthor.getName(),
-                    postAuthor.getUsername()
+                    postAuthor.getUsername(),
+                    postAuthor.isVerified()
             ),
             post.getCreatedAt(),
             post.getTitle(),
@@ -35,7 +36,8 @@ public class PostMapper {
             new PostAuthorDto(
                     postAuthor.getId(),
                     postAuthor.getName(),
-                    postAuthor.getUsername()
+                    postAuthor.getUsername(),
+                    postAuthor.isVerified()
             ),
             post.getCreatedAt(),
             post.getTitle(),

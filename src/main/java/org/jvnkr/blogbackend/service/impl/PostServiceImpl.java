@@ -36,7 +36,7 @@ public class PostServiceImpl implements PostService {
   }
 
   @Override
-  public String createPost(String title, String description, UUID userId) {
+  public PostDto createPost(String title, String description, UUID userId) {
     Optional<User> userOpt = userRepository.findById(userId);
     if (userOpt.isEmpty()) {
       throw new APIException(HttpStatus.BAD_REQUEST, "Invalid payload: user is required");
@@ -57,7 +57,7 @@ public class PostServiceImpl implements PostService {
     newPost.setUser(user);
 
     postRepository.save(newPost);
-    return "Post created successfully.";
+    return PostMapper.toPreviewPostDto(newPost);
   }
 
   @Override
@@ -112,7 +112,7 @@ public class PostServiceImpl implements PostService {
   }
 
   @Override
-  public String deletePost(UUID postId, UUID userId) {
+  public void deletePost(UUID postId, UUID userId) {
     if (postId == null) {
       throw new APIException(HttpStatus.BAD_REQUEST, "Invalid payload: post id is required");
     }
@@ -128,7 +128,6 @@ public class PostServiceImpl implements PostService {
     }
 
     postRepository.delete(post);
-    return "Post successfully deleted!";
   }
 
   @Override

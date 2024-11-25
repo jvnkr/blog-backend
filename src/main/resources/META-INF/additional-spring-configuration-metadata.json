@@ -24,6 +24,11 @@
       "name": "app.jwt-verify-expiration-milliseconds",
       "type": "java.lang.Long",
       "description": "Verify token expiration."
+    },
+    {
+      "name": "app.environment",
+      "type": "java.lang.String",
+      "description": "Development or production environment."
     }
   ]
 }

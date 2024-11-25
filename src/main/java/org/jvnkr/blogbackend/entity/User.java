@@ -40,6 +40,9 @@ public class User {
   @Column(name = "deleted")
   private boolean deleted;
 
+  @Column(name = "verified")
+  private boolean verified;
+
   @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP")
   private Date createdAt;
 

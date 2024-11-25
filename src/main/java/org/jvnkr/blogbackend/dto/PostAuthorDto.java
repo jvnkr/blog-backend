@@ -15,4 +15,5 @@ public class PostAuthorDto {
   private UUID id;
   private String name;
   private String username;
+  private boolean verified;
 }

@@ -16,6 +16,7 @@ import org.jvnkr.blogbackend.service.AuthService;
 import org.jvnkr.blogbackend.service.EmailService;
 import org.jvnkr.blogbackend.service.Roles;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -38,6 +39,9 @@ public class AuthServiceImpl implements AuthService {
   private final AuthenticationManager authenticationManager;
   private final JwtTokenProvider jwtTokenProvider;
   private final EmailService emailService;
+
+  @Value("${app.environment}")
+  private String environment;
 
   @Autowired
   public AuthServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder,
@@ -119,50 +123,64 @@ public class AuthServiceImpl implements AuthService {
       throw new APIException(HttpStatus.BAD_REQUEST, "Email already exists!");
     }
 
-    emailService.sendVerificationEmail(registerDto.getEmail().trim(), registerDto);
+    // Prod only
+    if (environment.equals("prod")) {
+      emailService.sendVerificationEmail(registerDto.getEmail().trim(), registerDto);
+    } else {
+      createUser(registerDto);
+    }
 
     return null;
+  }
+
+  private JwtAuthResponseDto createUser(RegisterDto registerDto) {
+    User user = new User();
+    user.setName(registerDto.getName());
+    user.setUsername(registerDto.getUsername());
+    user.setEmail(registerDto.getEmail());
+    user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+    user.setCreatedAt(new Date());
+
+    String roleName = String.valueOf(Roles.ROLE_USER);
+    Optional<Role> userRoleOptional = Optional.ofNullable(roleRepository.findByName(roleName));
+    Role userRole;
+
+    if (userRoleOptional.isPresent()) {
+      userRole = userRoleOptional.get();
+    } else {
+      userRole = new Role();
+      userRole.setName(roleName);
+      userRole = roleRepository.save(userRole);
+    }
+
+    Set<Role> roles = new HashSet<>();
+    roles.add(userRole);
+    user.setRoles(roles);
+
+    userRepository.save(user);
+
+    Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+            registerDto.getUsername(), registerDto.getPassword()));
+
+    SecurityContextHolder.getContext().setAuthentication(authentication);
+
+    String accessToken = jwtTokenProvider.generateAccessToken(user, authentication);
+    String refreshToken = jwtTokenProvider.generateRefreshToken(user);
+    return new JwtAuthResponseDto(accessToken, refreshToken, user.getUsername(), user.getName(), user.getId());
+
   }
 
   @Override
   public JwtAuthResponseDto verifyRegister(VerifyRegisterDto verifyRegisterDto) {
     try {
       Claims registerClaims = jwtTokenProvider.validateToken(verifyRegisterDto.getVerifyToken());
-
-      User user = new User();
-      user.setName(registerClaims.get("name").toString());
-      user.setUsername(registerClaims.get("username").toString());
-      user.setEmail(registerClaims.get("email").toString());
-      user.setPassword(passwordEncoder.encode(registerClaims.get("password").toString()));
-      user.setCreatedAt(new Date());
-
-      String roleName = String.valueOf(Roles.ROLE_USER);
-      Optional<Role> userRoleOptional = Optional.ofNullable(roleRepository.findByName(roleName));
-      Role userRole;
-
-      if (userRoleOptional.isPresent()) {
-        userRole = userRoleOptional.get();
-      } else {
-        userRole = new Role();
-        userRole.setName(roleName);
-        userRole = roleRepository.save(userRole);
-      }
-
-      Set<Role> roles = new HashSet<>();
-      roles.add(userRole);
-      user.setRoles(roles);
-
-      userRepository.save(user);
-
-      Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-              registerClaims.get("username").toString(),
-              registerClaims.get("password").toString()));
-
-      SecurityContextHolder.getContext().setAuthentication(authentication);
-
-      String accessToken = jwtTokenProvider.generateAccessToken(user, authentication);
-      String refreshToken = jwtTokenProvider.generateRefreshToken(user);
-      return new JwtAuthResponseDto(accessToken, refreshToken, user.getUsername(), user.getName(), user.getId());
+      return createUser(
+              new RegisterDto(
+                      registerClaims.get("username").toString(),
+                      registerClaims.get("password").toString(),
+                      registerClaims.get("name").toString(),
+                      registerClaims.get("email").toString()
+              ));
     } catch (JwtException e) {
       throw new APIException(HttpStatus.BAD_REQUEST, "Invalid token");
 
