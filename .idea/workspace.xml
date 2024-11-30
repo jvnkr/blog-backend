@@ -5,19 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="416601d5-8005-4c74-9cb8-40a35f8b76d8" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/39c806a3-b981-49c8-9b0e-502f5a6fcc90.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/39c806a3-b981-49c8-9b0e-502f5a6fcc90.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/39c806a3-b981-49c8-9b0e-502f5a6fcc90/storage_v2/_src_/database/blogapp.P4-6_g/schema/public.abK9xQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/39c806a3-b981-49c8-9b0e-502f5a6fcc90/storage_v2/_src_/database/blogapp.P4-6_g/schema/public.abK9xQ.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/controller/PostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/controller/PostController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/PostAuthorDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/PostAuthorDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/RegisterDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/RegisterDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/entity/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/mapper/PostMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/mapper/PostMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/repository/PostRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/repository/PostRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/PostService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/PostService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/AuthServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/AuthServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/PostServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/PostServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/additional-spring-configuration-metadata.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/additional-spring-configuration-metadata.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -157,6 +150,13 @@
       <workItem from="1732538332911" duration="245000" />
       <workItem from="1732538637399" duration="673000" />
       <workItem from="1732572192902" duration="1792000" />
+      <workItem from="1732576962714" duration="475000" />
+      <workItem from="1732620058875" duration="1223000" />
+      <workItem from="1732705138381" duration="1609000" />
+      <workItem from="1732778393622" duration="595000" />
+      <workItem from="1732999169629" duration="1169000" />
+      <workItem from="1733000951192" duration="1814000" />
+      <workItem from="1733004074704" duration="1268000" />
     </task>
     <servers />
   </component>

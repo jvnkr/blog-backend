@@ -23,4 +23,6 @@ public interface PostService {
   List<PostDto> getBatchOfUserPosts(UUID userId, int pageNumber, int batchSize, UUID viewerId);
 
   List<PostDto> getBatchOfAllPosts(int pageNumber, int batchSize, UUID viewerId);
+
+  List<PostDto> getBatchOfAllFollowingPosts(int pageNumber, int batchSize, UUID viewerId);
 }

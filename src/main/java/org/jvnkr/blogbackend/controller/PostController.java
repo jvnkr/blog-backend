@@ -46,6 +46,14 @@ public class PostController {
     return ResponseEntity.status(HttpStatus.OK).body(postService.getBatchOfAllPosts(pageNumberDto.getPageNumber(), GLOBAL_BATCH_SIZE, viewerId));
   }
 
+
+  @PreAuthorize("hasAnyRole('USER','ADMIN')")
+  @PostMapping("/batch/following")
+  public ResponseEntity<List<PostDto>> getAllFollowingBatchedPosts(@RequestBody PageNumberDto pageNumberDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    UUID viewerId = customUserDetails != null ? customUserDetails.getUserId() : null;
+    return ResponseEntity.status(HttpStatus.OK).body(postService.getBatchOfAllFollowingPosts(pageNumberDto.getPageNumber(), GLOBAL_BATCH_SIZE, viewerId));
+  }
+
   @PreAuthorize("hasAnyRole('USER','ADMIN')")
   @PostMapping("/batch/{userId}")
   public ResponseEntity<List<PostDto>> getUserBatchedPosts(@PathVariable UUID userId, @RequestBody PageNumberDto pageNumberDto, @AuthenticationPrincipal Optional<CustomUserDetails> customUserDetails) {

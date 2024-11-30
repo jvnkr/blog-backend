@@ -210,9 +210,33 @@ public class PostServiceImpl implements PostService {
     if (viewerId != null) viewer = userRepository.findById(viewerId).orElse(null);
     else viewer = null;
 
-
     Pageable pageable = PageRequest.of(pageNumber, batchSize, Sort.by(Sort.Direction.DESC, "createdAt"));
     Page<Post> postPage = postRepository.findAll(pageable);
+    List<Post> posts = postPage.getContent();
+
+    return posts.stream()
+            .map(post -> {
+              PostDto postDto = PostMapper.toPreviewPostDto(post);
+              if (viewer != null && post.getLikedBy().contains(viewer)) {
+                postDto.setLiked(true);
+              }
+              return postDto;
+            })
+            .collect(Collectors.toList());
+  }
+
+
+  @Override
+  public List<PostDto> getBatchOfAllFollowingPosts(int pageNumber, int batchSize, UUID viewerId) {
+    validatePagination(pageNumber, batchSize, null);
+
+    User viewer;
+    if (viewerId != null) viewer = userRepository.findById(viewerId).orElse(null);
+    else viewer = null;
+
+
+    Pageable pageable = PageRequest.of(pageNumber, batchSize, Sort.by(Sort.Direction.DESC, "createdAt"));
+    Page<Post> postPage = postRepository.findPostsByFollowedUsers(viewerId, pageable);
     List<Post> posts = postPage.getContent();
 
     return posts.stream()
