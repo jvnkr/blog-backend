@@ -1,6 +1,7 @@
 package org.jvnkr.blogbackend.controller;
 
 import lombok.AllArgsConstructor;
+import org.jvnkr.blogbackend.dto.UserProfileDto;
 import org.jvnkr.blogbackend.dto.UserResponseDto;
 import org.jvnkr.blogbackend.security.CustomUserDetails;
 import org.jvnkr.blogbackend.service.UserService;
@@ -26,15 +27,21 @@ public class UserController {
   }
 
   @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-  @PostMapping("/follow/{followingId}")
-  public ResponseEntity<Boolean> followUser(@PathVariable UUID followingId, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-    return ResponseEntity.status(HttpStatus.OK).body(userService.followUser(customUserDetails.getUserId(), followingId));
+  @GetMapping("/follow/{username}")
+  public ResponseEntity<Boolean> followUser(@PathVariable String username, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    return ResponseEntity.status(HttpStatus.OK).body(userService.followUser(customUserDetails.getUserId(), username));
   }
 
   @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-  @PostMapping("/unfollow/{unfollowingId}")
-  public ResponseEntity<Boolean> unfollowUser(@PathVariable UUID unfollowingId, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-    return ResponseEntity.status(HttpStatus.OK).body(userService.unfollowUser(customUserDetails.getUserId(), unfollowingId));
+  @GetMapping("/unfollow/{username}")
+  public ResponseEntity<Boolean> unfollowUser(@PathVariable String username, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    return ResponseEntity.status(HttpStatus.OK).body(userService.unfollowUser(customUserDetails.getUserId(), username));
+  }
+
+  @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+  @GetMapping("/{username}")
+  public ResponseEntity<UserProfileDto> getUserProfile(@PathVariable String username) {
+    return ResponseEntity.status(HttpStatus.OK).body(userService.getUserProfile(username));
   }
 
 }

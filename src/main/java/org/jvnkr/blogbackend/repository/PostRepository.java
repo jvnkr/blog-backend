@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.UUID;
 
 public interface PostRepository extends JpaRepository<Post, UUID> {
-  Page<Post> findByUserId(UUID user_id, Pageable pageable);
+  Page<Post> findByUserId(UUID userId, Pageable pageable);
 
   @Query("SELECT p FROM Post p WHERE p.user IN (" +
           "SELECT u FROM User u JOIN u.following f WHERE f.id = :userId)")

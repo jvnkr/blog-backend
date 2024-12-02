@@ -166,7 +166,7 @@ public class AuthServiceImpl implements AuthService {
 
     String accessToken = jwtTokenProvider.generateAccessToken(user, authentication);
     String refreshToken = jwtTokenProvider.generateRefreshToken(user);
-    return new JwtAuthResponseDto(accessToken, refreshToken, user.getUsername(), user.getName(), user.getId());
+    return new JwtAuthResponseDto(accessToken, refreshToken, user.getUsername(), user.getName(), user.getEmail(), user.getId());
 
   }
 
@@ -200,6 +200,6 @@ public class AuthServiceImpl implements AuthService {
 
     String accessToken = jwtTokenProvider.generateAccessToken(user, authentication);
     String refreshToken = jwtTokenProvider.generateRefreshToken(user);
-    return new JwtAuthResponseDto(accessToken, refreshToken, user.getUsername(), user.getName(), user.getId());
+    return new JwtAuthResponseDto(accessToken, refreshToken, user.getUsername(), user.getName(), user.getEmail(), user.getId());
   }
 }

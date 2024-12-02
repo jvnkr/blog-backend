@@ -141,15 +141,21 @@ public class PostServiceImpl implements PostService {
   }
 
   @Override
-  public List<PostDto> getBatchOfUserPosts(UUID userId, int pageNumber, int batchSize, UUID viewerId) {
-    validatePagination(pageNumber, batchSize, userId);
+  public List<PostDto> getBatchOfUserPosts(String username, int pageNumber, int batchSize, UUID viewerId) {
+    validatePagination(pageNumber, batchSize, viewerId);
 
     User viewer;
     if (viewerId != null) viewer = userRepository.findById(viewerId).orElse(null);
-    else viewer = null;
+    else {
+      throw new APIException(HttpStatus.BAD_REQUEST, "Viewer not found");
+    }
 
+    User postOwner = userRepository.findByUsernameOrEmail(username, null).orElse(null);
+    if (postOwner == null) {
+      throw new APIException(HttpStatus.NOT_FOUND, "User not found");
+    }
     Pageable pageable = PageRequest.of(pageNumber, batchSize, Sort.by(Sort.Direction.DESC, "createdAt"));
-    Page<Post> postPage = postRepository.findByUserId(userId, pageable);
+    Page<Post> postPage = postRepository.findByUserId(postOwner.getId(), pageable);
     List<Post> posts = postPage.getContent();
 
     return posts.stream()

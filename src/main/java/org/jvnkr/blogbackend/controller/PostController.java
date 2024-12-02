@@ -55,11 +55,10 @@ public class PostController {
   }
 
   @PreAuthorize("hasAnyRole('USER','ADMIN')")
-  @PostMapping("/batch/{userId}")
-  public ResponseEntity<List<PostDto>> getUserBatchedPosts(@PathVariable UUID userId, @RequestBody PageNumberDto pageNumberDto, @AuthenticationPrincipal Optional<CustomUserDetails> customUserDetails) {
-    UUID viewerId = null;
-    if (customUserDetails.isPresent()) viewerId = customUserDetails.map(CustomUserDetails::getUserId).orElse(null);
-    return ResponseEntity.status(HttpStatus.OK).body(postService.getBatchOfUserPosts(userId, pageNumberDto.getPageNumber(), GLOBAL_BATCH_SIZE, viewerId));
+  @PostMapping("/batch/{username}")
+  public ResponseEntity<List<PostDto>> getUserBatchedPosts(@PathVariable String username, @RequestBody PageNumberDto pageNumberDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    UUID viewerId = customUserDetails != null ? customUserDetails.getUserId() : null;
+    return ResponseEntity.status(HttpStatus.OK).body(postService.getBatchOfUserPosts(username, pageNumberDto.getPageNumber(), GLOBAL_BATCH_SIZE, viewerId));
   }
 
   @PreAuthorize("hasAnyRole('USER','ADMIN')")
@@ -76,14 +75,14 @@ public class PostController {
   }
 
   @PreAuthorize("hasAnyRole('USER','ADMIN')")
-  @PostMapping("/like/{postId}")
+  @GetMapping("/like/{postId}")
   public ResponseEntity<Boolean> likePost(@PathVariable UUID postId, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
     return ResponseEntity.status(HttpStatus.OK).body(postService.likePost(postId, customUserDetails.getUserId()));
   }
 
 
   @PreAuthorize("hasAnyRole('USER','ADMIN')")
-  @PostMapping("/unlike/{postId}")
+  @GetMapping("/unlike/{postId}")
   public ResponseEntity<Boolean> unlikePost(@PathVariable UUID postId, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
     return ResponseEntity.status(HttpStatus.OK).body(postService.unlikePost(postId, customUserDetails.getUserId()));
   }

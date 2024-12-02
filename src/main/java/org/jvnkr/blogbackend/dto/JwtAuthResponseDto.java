@@ -16,6 +16,7 @@ public class JwtAuthResponseDto {
   private String refreshToken;
   private String username;
   private String name;
+  private String email;
   private UUID userId;
   // private String tokenType = "Bearer";
 }

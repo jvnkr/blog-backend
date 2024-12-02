@@ -20,7 +20,7 @@ public interface PostService {
 
   void deletePost(UUID postId, UUID userId);
 
-  List<PostDto> getBatchOfUserPosts(UUID userId, int pageNumber, int batchSize, UUID viewerId);
+  List<PostDto> getBatchOfUserPosts(String username, int pageNumber, int batchSize, UUID viewerId);
 
   List<PostDto> getBatchOfAllPosts(int pageNumber, int batchSize, UUID viewerId);
 

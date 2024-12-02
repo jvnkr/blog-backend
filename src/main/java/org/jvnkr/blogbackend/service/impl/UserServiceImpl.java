@@ -1,6 +1,7 @@
 package org.jvnkr.blogbackend.service.impl;
 
 import lombok.AllArgsConstructor;
+import org.jvnkr.blogbackend.dto.UserProfileDto;
 import org.jvnkr.blogbackend.dto.UserResponseDto;
 import org.jvnkr.blogbackend.entity.User;
 import org.jvnkr.blogbackend.exception.APIException;
@@ -31,16 +32,16 @@ public class UserServiceImpl implements UserService {
 
   @Transactional
   @Override
-  public boolean followUser(UUID userId, UUID followerId) {
-    Optional<User> userOpt = userRepository.findById(userId);
-    Optional<User> followerOpt = userRepository.findById(followerId);
+  public boolean followUser(UUID viewerId, String username) {
+    Optional<User> userOpt = userRepository.findById(viewerId);
+    Optional<User> followerOpt = userRepository.findByUsernameOrEmail(username, null);
 
     if (userOpt.isEmpty()) throw new APIException(HttpStatus.NOT_FOUND, "User not found");
     if (followerOpt.isEmpty()) throw new APIException(HttpStatus.NOT_FOUND, "Follower not found");
 
     User user = userOpt.get();
     User follower = followerOpt.get();
-    if (user.getId().equals(followerId)) {
+    if (user.getId().equals(username)) {
       throw new APIException(HttpStatus.BAD_REQUEST, "You cannot follow yourself");
     }
 
@@ -48,21 +49,21 @@ public class UserServiceImpl implements UserService {
       userRepository.save(user);
       return true;
     }
-    return false;
+    throw new APIException(HttpStatus.BAD_REQUEST, "You already follow this user.");
   }
 
   @Transactional
   @Override
-  public boolean unfollowUser(UUID userId, UUID followerId) {
-    Optional<User> userOpt = userRepository.findById(userId);
-    Optional<User> followerOpt = userRepository.findById(followerId);
+  public boolean unfollowUser(UUID viewerId, String username) {
+    Optional<User> userOpt = userRepository.findById(viewerId);
+    Optional<User> followerOpt = userRepository.findByUsernameOrEmail(username, null);
 
     if (userOpt.isEmpty()) throw new APIException(HttpStatus.NOT_FOUND, "User not found");
     if (followerOpt.isEmpty()) throw new APIException(HttpStatus.NOT_FOUND, "Follower not found");
 
     User user = userOpt.get();
     User follower = followerOpt.get();
-    if (user.getId().equals(followerId)) {
+    if (user.getId().equals(username)) {
       throw new APIException(HttpStatus.BAD_REQUEST, "You cannot unfollow yourself");
     }
 
@@ -73,6 +74,19 @@ public class UserServiceImpl implements UserService {
       return true;
     }
 
-    return false;
+    throw new APIException(HttpStatus.BAD_REQUEST, "You need to follow this user first.");
   }
+
+  @Override
+  public UserProfileDto getUserProfile(String username) {
+    Optional<User> userOpt = userRepository.findByUsernameOrEmail(username, null);
+    
+    UserProfileDto userProfileDto = userOpt.map(UserMapper::toUserProfileDto).orElse(null);
+    
+    if (userProfileDto == null) {
+      throw new APIException(HttpStatus.NOT_FOUND, "User not found");
+    }
+    return userProfileDto;
+  }
+
 }

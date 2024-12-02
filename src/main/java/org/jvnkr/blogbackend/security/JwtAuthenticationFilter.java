@@ -83,13 +83,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   }
 
   private void setAuthenticationContext(String token, HttpServletRequest request) {
-    UserDetails userDetails = customUserDetailsService.loadUserById(jwtTokenProvider.getUserId(token));
+    UUID userId = jwtTokenProvider.getUserId(token);
+    UserDetails userDetails = customUserDetailsService.loadUserById(userId);
+
+    if (userDetails == null) {
+      logger.error("User details could not be loaded for userId: " + userId);
+      return;
+    }
 
     List<SimpleGrantedAuthority> authorities = jwtTokenProvider.getClaimFromToken(token, claims -> {
       @SuppressWarnings("unchecked")
       List<String> roles = (List<String>) claims.get("roles");
       return roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     });
+
+    if (authorities.isEmpty()) {
+      logger.warn("No authorities found for user: " + userDetails.getUsername());
+    }
 
     UsernamePasswordAuthenticationToken authenticationToken =
             new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
