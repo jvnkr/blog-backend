@@ -9,6 +9,7 @@ import org.jvnkr.blogbackend.mapper.PostMapper;
 import org.jvnkr.blogbackend.repository.PostRepository;
 import org.jvnkr.blogbackend.repository.UserRepository;
 import org.jvnkr.blogbackend.service.PostService;
+import org.jvnkr.blogbackend.utils.Pagination;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,7 +33,7 @@ public class PostServiceImpl implements PostService {
   @Override
   public List<PostDto> getAllPosts() {
     List<Post> posts = postRepository.findAll();
-    return posts.stream().map(PostMapper::toPostDto).collect(Collectors.toList());
+    return posts.stream().map(post -> PostMapper.toPostDto(post, null)).collect(Collectors.toList());
   }
 
   @Override
@@ -57,7 +58,7 @@ public class PostServiceImpl implements PostService {
     newPost.setUser(user);
 
     postRepository.save(newPost);
-    return PostMapper.toPreviewPostDto(newPost);
+    return PostMapper.toPreviewPostDto(newPost, user);
   }
 
   @Override
@@ -131,18 +132,24 @@ public class PostServiceImpl implements PostService {
   }
 
   @Override
-  public PostDto getPostById(UUID postId) {
+  public PostDto getPostById(UUID postId, UUID viewerId) {
     Optional<Post> postOpt = postRepository.findById(postId);
     if (postOpt.isEmpty()) {
       throw new APIException(HttpStatus.NOT_FOUND, "Post not found");
     }
+    User viewer;
+    if (viewerId != null) viewer = userRepository.findById(viewerId).orElse(null);
+    else {
+      throw new APIException(HttpStatus.BAD_REQUEST, "Viewer not found");
+    }
+
     Post post = postOpt.get();
-    return PostMapper.toPostDto(post);
+    return PostMapper.toPostDto(post, viewer);
   }
 
   @Override
   public List<PostDto> getBatchOfUserPosts(String username, int pageNumber, int batchSize, UUID viewerId) {
-    validatePagination(pageNumber, batchSize, viewerId);
+    Pagination.validate(pageNumber, batchSize, viewerId, userRepository);
 
     User viewer;
     if (viewerId != null) viewer = userRepository.findById(viewerId).orElse(null);
@@ -159,11 +166,9 @@ public class PostServiceImpl implements PostService {
     List<Post> posts = postPage.getContent();
 
     return posts.stream()
-            .map((post -> {
-              PostDto postDto = PostMapper.toPostDto(post);
-              if (viewer != null && post.getLikedBy().contains(viewer)) postDto.setLiked(true);
-              return postDto;
-            }))
+            .map((post ->
+                    PostMapper.toPreviewPostDto(post, viewer)
+            ))
             .collect(Collectors.toList());
   }
 
@@ -210,7 +215,7 @@ public class PostServiceImpl implements PostService {
 
   @Override
   public List<PostDto> getBatchOfAllPosts(int pageNumber, int batchSize, UUID viewerId) {
-    validatePagination(pageNumber, batchSize, null);
+    Pagination.validate(pageNumber, batchSize, null, userRepository);
 
     User viewer;
     if (viewerId != null) viewer = userRepository.findById(viewerId).orElse(null);
@@ -221,20 +226,16 @@ public class PostServiceImpl implements PostService {
     List<Post> posts = postPage.getContent();
 
     return posts.stream()
-            .map(post -> {
-              PostDto postDto = PostMapper.toPreviewPostDto(post);
-              if (viewer != null && post.getLikedBy().contains(viewer)) {
-                postDto.setLiked(true);
-              }
-              return postDto;
-            })
+            .map(post ->
+                    PostMapper.toPreviewPostDto(post, viewer)
+            )
             .collect(Collectors.toList());
   }
 
 
   @Override
   public List<PostDto> getBatchOfAllFollowingPosts(int pageNumber, int batchSize, UUID viewerId) {
-    validatePagination(pageNumber, batchSize, null);
+    Pagination.validate(pageNumber, batchSize, null, userRepository);
 
     User viewer;
     if (viewerId != null) viewer = userRepository.findById(viewerId).orElse(null);
@@ -246,26 +247,9 @@ public class PostServiceImpl implements PostService {
     List<Post> posts = postPage.getContent();
 
     return posts.stream()
-            .map(post -> {
-              PostDto postDto = PostMapper.toPreviewPostDto(post);
-              if (viewer != null && post.getLikedBy().contains(viewer)) {
-                postDto.setLiked(true);
-              }
-              return postDto;
-            })
+            .map(post ->
+                    PostMapper.toPreviewPostDto(post, viewer)
+            )
             .collect(Collectors.toList());
   }
-
-  private void validatePagination(int pageNumber, int batchSize, UUID userId) {
-    if (pageNumber < 0) {
-      throw new APIException(HttpStatus.BAD_REQUEST, "Invalid payload: page number must be greater than or equal to 0");
-    }
-    if (batchSize <= 0) {
-      throw new APIException(HttpStatus.BAD_REQUEST, "Invalid payload: batch size must be greater than 0");
-    }
-    if (userId != null && !userRepository.existsById(userId)) {
-      throw new APIException(HttpStatus.NOT_FOUND, "Invalid payload: user not found");
-    }
-  }
-
 }

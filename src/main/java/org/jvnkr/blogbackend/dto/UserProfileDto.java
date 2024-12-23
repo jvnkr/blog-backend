@@ -14,6 +14,7 @@ import java.util.Date;
 public class UserProfileDto {
   private String name;
   private String username;
+  private boolean verified;
   private String bio;
   private int followers;
   private int following;

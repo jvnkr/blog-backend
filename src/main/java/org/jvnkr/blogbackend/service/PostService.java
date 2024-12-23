@@ -12,7 +12,7 @@ public interface PostService {
 
   boolean unlikePost(UUID postId, UUID userId);
 
-  PostDto getPostById(UUID postId);
+  PostDto getPostById(UUID postId, UUID viewerId);
 
   List<PostDto> getAllPosts();
 

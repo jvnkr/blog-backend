@@ -12,7 +12,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -36,8 +35,9 @@ public class PostController {
 
   @PreAuthorize("hasAnyRole('USER','ADMIN')")
   @GetMapping("/{postId}")
-  public ResponseEntity<PostDto> getPostById(@PathVariable UUID postId) {
-    return ResponseEntity.status(HttpStatus.OK).body(postService.getPostById(postId));
+  public ResponseEntity<PostDto> getPostById(@PathVariable UUID postId, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    UUID viewerId = customUserDetails != null ? customUserDetails.getUserId() : null;
+    return ResponseEntity.status(HttpStatus.OK).body(postService.getPostById(postId, viewerId));
   }
 
   @PostMapping("/batch")
@@ -82,7 +82,7 @@ public class PostController {
 
 
   @PreAuthorize("hasAnyRole('USER','ADMIN')")
-  @GetMapping("/unlike/{postId}")
+  @DeleteMapping("/like/{postId}")
   public ResponseEntity<Boolean> unlikePost(@PathVariable UUID postId, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
     return ResponseEntity.status(HttpStatus.OK).body(postService.unlikePost(postId, customUserDetails.getUserId()));
   }

@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -43,6 +44,19 @@ public class Post {
 
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<Comment> comments = new HashSet<>();
+
+  // Getter for top-level comments (excluding replies)
+  public Set<Comment> getTopLevelComments() {
+    // Return comments where parentComment is null
+    return comments.stream()
+            .filter(comment -> comment.getParentComment() == null)
+            .collect(Collectors.toSet());
+  }
+
+  // Getter for total number of all comments (including replies)
+  public int getTotalComments() {
+    return comments.size();
+  }
 
   @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(name = "post_likes",

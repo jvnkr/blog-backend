@@ -16,6 +16,7 @@ public class UserMapper {
     return new UserProfileDto(
             user.getName(),
             user.getUsername(),
+            user.isVerified(),
             user.getBio(),
             user.getFollowers().size(),
             user.getFollowing().size(),

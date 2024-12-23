@@ -7,15 +7,19 @@ import java.util.List;
 import java.util.UUID;
 
 public interface CommentService {
-  String createComment(UUID postId, UUID userId, String commentText);
+  CommentDto createComment(UUID postId, UUID userId, String commentText);
+
+  boolean likeComment(UUID commentId, UUID userId);
+
+  boolean unlikeComment(UUID commentId, UUID userId);
 
   String removeComment(UUID commentId, UUID userId);
 
-  String addReply(UUID parentCommentId, UUID userId, String replyText);
+  CommentDto addReply(UUID parentCommentId, UUID commentId, UUID userId, String replyText);
 
   String removeReply(UUID replyId, UUID userId);
 
-  List<CommentDto> getBatchOfComments(UUID postId, int pageNumber, int batchSize);
+  List<CommentDto> getBatchOfComments(UUID postId, int pageNumber, int batchSize, UUID viewerId);
 
-  List<CommentDto> getBatchOfReplies(UUID commentId, int pageNumber, int batchSize);
+  List<CommentDto> getBatchOfReplies(UUID commentId, int pageNumber, int batchSize, UUID viewerId);
 }

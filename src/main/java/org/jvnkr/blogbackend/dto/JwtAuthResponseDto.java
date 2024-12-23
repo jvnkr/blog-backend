@@ -1,11 +1,11 @@
 package org.jvnkr.blogbackend.dto;
 
-import java.util.UUID;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -18,5 +18,6 @@ public class JwtAuthResponseDto {
   private String name;
   private String email;
   private UUID userId;
+  private boolean verified;
   // private String tokenType = "Bearer";
 }

@@ -11,10 +11,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SessionTokenDto {
-  private String accessToken;
-  private UUID userId;
+public class RepliesToAuthorDto {
+  private UUID id;
   private String username;
-  private String name;
-  private boolean verified;
 }

@@ -43,6 +43,12 @@ public class AuthServiceImpl implements AuthService {
   @Value("${app.environment}")
   private String environment;
 
+  @Value("${app.jwt-access-expiration-seconds}")
+  private int accessTokenExpirationSeconds;
+
+  @Value("${app.jwt-refresh-expiration-seconds}")
+  private int refreshTokenExpirationSeconds;
+
   @Autowired
   public AuthServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder,
                          AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, EmailServiceImpl emailService) {
@@ -54,6 +60,19 @@ public class AuthServiceImpl implements AuthService {
     this.emailService = emailService;
   }
 
+  private String generateNewAccessToken(User user, Authentication authentication, HttpServletResponse response) {
+    String newAccessToken = jwtTokenProvider.generateAccessToken(user, authentication);
+    response.addCookie(createAccessCookie(newAccessToken));
+    return newAccessToken;
+  }
+
+  private SessionTokenDto renewAccessToken(String refreshToken, User user, HttpServletResponse response) {
+    Authentication authentication = jwtTokenProvider.getAuthentication(refreshToken);
+    String newAccessToken = generateNewAccessToken(user, authentication, response);
+
+    return new SessionTokenDto(newAccessToken, user.getId(), user.getUsername(), user.getName(), user.isVerified());
+  }
+
   @Override
   public SessionTokenDto validateSession(ValidateTokensDto validateTokensDto, HttpServletResponse response) {
     if (validateTokensDto == null) {
@@ -63,7 +82,7 @@ public class AuthServiceImpl implements AuthService {
     String refreshToken = validateTokensDto.getRefreshToken();
     String accessToken = validateTokensDto.getAccessToken();
 
-    if (jwtTokenProvider.validateToken(refreshToken) == null) {
+    if (jwtTokenProvider.validateToken(refreshToken) == null || refreshToken.trim().isEmpty()) {
       throw new APIException(HttpStatus.FORBIDDEN, "Refresh Token expired or invalid");
     }
 
@@ -71,26 +90,16 @@ public class AuthServiceImpl implements AuthService {
             .orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "Invalid user"));
 
     try {
+      if (accessToken.trim().isEmpty()) {
+        return renewAccessToken(refreshToken, user, response);
+      }
       jwtTokenProvider.validateToken(accessToken);
     } catch (ExpiredJwtException e) {
-      Authentication authentication = jwtTokenProvider.getAuthentication(refreshToken);
-      String newAccessToken = jwtTokenProvider.generateAccessToken(user, authentication);
-
-      // Set the new access token as a cookie in the response
-      Cookie accessTokenCookie = new Cookie("a_t", newAccessToken);
-//      accessTokenCookie.setHttpOnly(true);
-//      accessTokenCookie.setSecure(true); // Use this flag if your site uses HTTPS
-//      accessTokenCookie.setPath("/");
-      accessTokenCookie.setMaxAge(60); // Set cookie expiration time in seconds
-
-      response.addCookie(accessTokenCookie);
-
-      return new SessionTokenDto(newAccessToken, user.getId(), user.getUsername(), user.getName());
+      return renewAccessToken(refreshToken, user, response);
     } catch (JwtException e) {
       throw new APIException(HttpStatus.FORBIDDEN, "Failed to renew access token");
     }
-
-    return new SessionTokenDto("", user.getId(), user.getUsername(), user.getName());
+    return new SessionTokenDto(accessToken, user.getId(), user.getUsername(), user.getName(), user.isVerified());
   }
 
   @Override
@@ -133,6 +142,16 @@ public class AuthServiceImpl implements AuthService {
     return null;
   }
 
+  private Cookie createAccessCookie(String accessToken) {
+    Cookie accessTokenCookie = new Cookie("a_t", accessToken);
+    accessTokenCookie.setHttpOnly(true); // Ensures the cookie is not accessible via JavaScript
+    accessTokenCookie.setSecure(false); // Ensures the cookie is sent over HTTPS
+    accessTokenCookie.setPath("/"); // Cookie is accessible for the entire application
+    accessTokenCookie.setMaxAge(accessTokenExpirationSeconds);
+
+    return accessTokenCookie;
+  }
+
   private JwtAuthResponseDto createUser(RegisterDto registerDto) {
     User user = new User();
     user.setName(registerDto.getName());
@@ -166,7 +185,7 @@ public class AuthServiceImpl implements AuthService {
 
     String accessToken = jwtTokenProvider.generateAccessToken(user, authentication);
     String refreshToken = jwtTokenProvider.generateRefreshToken(user);
-    return new JwtAuthResponseDto(accessToken, refreshToken, user.getUsername(), user.getName(), user.getEmail(), user.getId());
+    return new JwtAuthResponseDto(accessToken, refreshToken, user.getUsername(), user.getName(), user.getEmail(), user.getId(), user.isVerified());
 
   }
 
@@ -188,7 +207,7 @@ public class AuthServiceImpl implements AuthService {
   }
 
   @Override
-  public JwtAuthResponseDto login(LoginDto loginDto) {
+  public JwtAuthResponseDto login(LoginDto loginDto, HttpServletResponse response) {
     Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
             loginDto.getUsernameOrEmail(),
             loginDto.getPassword()));
@@ -200,6 +219,17 @@ public class AuthServiceImpl implements AuthService {
 
     String accessToken = jwtTokenProvider.generateAccessToken(user, authentication);
     String refreshToken = jwtTokenProvider.generateRefreshToken(user);
-    return new JwtAuthResponseDto(accessToken, refreshToken, user.getUsername(), user.getName(), user.getEmail(), user.getId());
+
+
+    response.addCookie(createAccessCookie(accessToken));
+
+    Cookie refreshTokenCookie = new Cookie("r_t", refreshToken);
+    refreshTokenCookie.setHttpOnly(true);
+    refreshTokenCookie.setSecure(false);
+    refreshTokenCookie.setPath("/");
+    refreshTokenCookie.setMaxAge(refreshTokenExpirationSeconds);
+    response.addCookie(refreshTokenCookie);
+
+    return new JwtAuthResponseDto(accessToken, refreshToken, user.getUsername(), user.getName(), user.getEmail(), user.getId(), user.isVerified());
   }
 }

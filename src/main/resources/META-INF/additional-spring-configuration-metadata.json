@@ -29,6 +29,16 @@
       "name": "app.environment",
       "type": "java.lang.String",
       "description": "Development or production environment."
+    },
+    {
+      "name": "app.jwt-access-expiration-seconds",
+      "type": "java.lang.Integer",
+      "description": "Description for app.jwt-access-expiration-seconds."
+    },
+    {
+      "name": "app.jwt-refresh-expiration-seconds",
+      "type": "java.lang.Integer",
+      "description": "Description for app.jwt-access-expiration-seconds."
     }
   ]
 }

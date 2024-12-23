@@ -11,6 +11,7 @@ import org.jvnkr.blogbackend.repository.CommentRepository;
 import org.jvnkr.blogbackend.repository.PostRepository;
 import org.jvnkr.blogbackend.repository.UserRepository;
 import org.jvnkr.blogbackend.service.CommentService;
+import org.jvnkr.blogbackend.utils.Pagination;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -33,7 +34,7 @@ public class CommentServiceImpl implements CommentService {
 
   @Transactional
   @Override
-  public String createComment(UUID postId, UUID userId, String commentText) {
+  public CommentDto createComment(UUID postId, UUID userId, String commentText) {
     if (postId == null) {
       throw new APIException(HttpStatus.BAD_REQUEST, "Invalid payload: post id is required");
     }
@@ -58,7 +59,46 @@ public class CommentServiceImpl implements CommentService {
 
     post.addComment(comment);
     commentRepository.save(comment);
-    return "Comment created successfully.";
+    return CommentMapper.toCommentDto(comment, user);
+  }
+
+  @Override
+  public boolean likeComment(UUID commentId, UUID userId) {
+    if (commentId == null) {
+      throw new APIException(HttpStatus.BAD_REQUEST, "Invalid payload: comment id is required");
+    }
+    if (userId == null) {
+      throw new APIException(HttpStatus.BAD_REQUEST, "Invalid payload: user id is required");
+    }
+    User user = userRepository.findById(userId).orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "User not found"));
+    Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "Comment not found"));
+
+    if (comment.getLikedBy().contains(user)) {
+      throw new APIException(HttpStatus.BAD_REQUEST, "Comment already liked by this user.");
+    }
+    comment.addLike(user);
+    commentRepository.save(comment);
+    return true;
+  }
+
+
+  @Override
+  public boolean unlikeComment(UUID commentId, UUID userId) {
+    if (commentId == null) {
+      throw new APIException(HttpStatus.BAD_REQUEST, "Invalid payload: comment id is required");
+    }
+    if (userId == null) {
+      throw new APIException(HttpStatus.BAD_REQUEST, "Invalid payload: user id is required");
+    }
+    User user = userRepository.findById(userId).orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "User not found"));
+    Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "Comment not found"));
+
+    if (!comment.getLikedBy().contains(user)) {
+      throw new APIException(HttpStatus.BAD_REQUEST, "User has not liked this comment.");
+    }
+    comment.removeLike(user);
+    commentRepository.save(comment);
+    return true;
   }
 
   @Transactional
@@ -96,33 +136,38 @@ public class CommentServiceImpl implements CommentService {
     return "Comment removed successfully.";
   }
 
-  @Transactional // Transactional ensures that the operations are atomic, consistent, isolated, and durable (ACID).
+  @Transactional
+  // Transactional keeps the integrity of data and ensures that the operations are atomic, consistent, isolated, and durable (ACID).
   @Override
-  public String addReply(UUID parentCommentId, UUID userId, String replyText) {
-    if (parentCommentId == null) {
+  public CommentDto addReply(UUID rootCommentId, UUID commentId, UUID viewerId, String replyText) {
+    if (rootCommentId == null) {
       throw new APIException(HttpStatus.BAD_REQUEST, "Invalid payload: parent comment id is required");
     }
-    if (userId == null) {
-      throw new APIException(HttpStatus.BAD_REQUEST, "Invalid payload: user id is required");
+    if (commentId == null) {
+      throw new APIException(HttpStatus.BAD_REQUEST, "Invalid payload: comment id is required");
+    }
+    if (viewerId == null) {
+      throw new APIException(HttpStatus.BAD_REQUEST, "Invalid payload: viewer id is required");
     }
     if (replyText == null || replyText.isEmpty()) {
       throw new APIException(HttpStatus.BAD_REQUEST, "Invalid payload: reply text is required");
     }
-    Comment parentComment = commentRepository.findById(parentCommentId).orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "Comment not found"));
-    User user = userRepository.findById(userId).orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "User not found"));
+    Comment rootComment = commentRepository.findById(rootCommentId).orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "Parent Comment not found"));
+    Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "Comment not found"));
+    User viewer = userRepository.findById(viewerId).orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "User not found"));
 
     replyText = replyText.trim();
 
     Comment replyComment = new Comment();
     replyComment.setText(replyText);
     replyComment.setCreatedAt(new Date());
-    replyComment.setParentComment(parentComment);
-    replyComment.setPost(parentComment.getPost());
-    replyComment.setUser(user);
+    replyComment.setPost(comment.getPost());
+    replyComment.setUser(viewer);
+    replyComment.setRepliesToComment(comment);
 
-    parentComment.addReply(replyComment);
+    rootComment.addReply(replyComment);
     commentRepository.save(replyComment);
-    return "Reply added successfully.";
+    return CommentMapper.toCommentDto(replyComment, viewer);
   }
 
   @Transactional
@@ -153,16 +198,12 @@ public class CommentServiceImpl implements CommentService {
   }
 
   @Override
-  public List<CommentDto> getBatchOfComments(UUID postId, int pageNumber, int batchSize) {
-    if (pageNumber < 0) {
-      throw new APIException(HttpStatus.BAD_REQUEST, "Invalid payload: page number must be greater than or equal to 0");
-    }
-    if (postId == null) {
-      throw new APIException(HttpStatus.BAD_REQUEST, "Invalid payload: post id is required");
-    }
-    if (batchSize <= 0) {
-      throw new APIException(HttpStatus.BAD_REQUEST, "Invalid payload: batch size must be greater than 0");
-    }
+  public List<CommentDto> getBatchOfComments(UUID postId, int pageNumber, int batchSize, UUID viewerId) {
+    Pagination.validate(pageNumber, batchSize, viewerId, userRepository);
+
+    User viewer;
+    if (viewerId != null) viewer = userRepository.findById(viewerId).orElse(null);
+    else viewer = null;
 
     boolean existsPost = postRepository.existsById(postId);
     if (!existsPost) {
@@ -174,32 +215,35 @@ public class CommentServiceImpl implements CommentService {
 
     List<Comment> comments = commentPage.getContent();
 
-    return comments.stream().map(CommentMapper::toCommentDto).collect(Collectors.toList());
+    return comments.stream().map(comment -> CommentMapper.toCommentDto(comment, viewer)).collect(Collectors.toList());
   }
 
   @Override
-  public List<CommentDto> getBatchOfReplies(UUID commentId, int pageNumber, int batchSize) {
-    if (pageNumber < 0) {
-      throw new APIException(HttpStatus.BAD_REQUEST, "Invalid payload: page number must be greater than or equal to 0");
-    }
-    if (commentId == null) {
-      throw new APIException(HttpStatus.BAD_REQUEST, "Invalid payload: comment id is required");
-    }
-    if (batchSize <= 0) {
-      throw new APIException(HttpStatus.BAD_REQUEST, "Invalid payload: batch size must be greater than 0");
-    }
+  public List<CommentDto> getBatchOfReplies(UUID rootCommentId, int pageNumber, int batchSize, UUID viewerId) {
+    Pagination.validate(pageNumber, batchSize, viewerId, userRepository);
 
-    boolean existsComment = commentRepository.existsById(commentId);
-    if (!existsComment) {
+    User viewer;
+    if (viewerId != null) viewer = userRepository.findById(viewerId).orElse(null);
+    else viewer = null;
+
+    Comment comment = commentRepository.findById(rootCommentId).orElse(null);
+    if (comment == null) {
       throw new APIException(HttpStatus.NOT_FOUND, "Invalid payload: comment not found");
     }
 
-    Pageable pageable = PageRequest.of(pageNumber, batchSize, Sort.by(Sort.Direction.DESC, "createdAt"));
-    Page<Comment> replyPage = commentRepository.findByParentCommentId(commentId, pageable);
+    if (comment.getParentComment() != null) {
+      throw new APIException(HttpStatus.BAD_REQUEST, "Cannot fetch replies from a reply");
+
+    }
+
+    // Direction.ASC - ascending
+    // Direction.DESC - descending
+    Pageable pageable = PageRequest.of(pageNumber, batchSize, Sort.by(Sort.Direction.ASC, "createdAt"));
+    Page<Comment> replyPage = commentRepository.findByParentCommentId(rootCommentId, pageable);
 
     List<Comment> replies = replyPage.getContent();
 
-    return replies.stream().map(CommentMapper::toCommentDto).collect(Collectors.toList());
+    return replies.stream().map((com -> CommentMapper.toCommentDto(com, viewer))).collect(Collectors.toList());
   }
 
 

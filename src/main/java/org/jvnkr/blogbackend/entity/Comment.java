@@ -40,11 +40,22 @@ public class Comment {
   private Post post;
 
   @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "replies_to_comment_id")
+  private Comment repliesToComment;
+
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "parent_comment_id")
   private Comment parentComment;
 
   @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<Comment> replies = new HashSet<>();
+
+  @ManyToMany(fetch = FetchType.LAZY)
+  @JoinTable(name = "comment_likes",
+          joinColumns = @JoinColumn(name = "comment_id", referencedColumnName = "id"),
+          inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id")
+  )
+  private Set<User> likedBy = new HashSet<>();
 
   // Helper methods for managing bidirectional relationships
   public void addReply(Comment reply) {
@@ -55,5 +66,14 @@ public class Comment {
   public void removeReply(Comment reply) {
     replies.remove(reply);
     reply.setParentComment(null);
+  }
+
+  // Helper methods for managing likes
+  public void addLike(User user) {
+    likedBy.add(user);
+  }
+
+  public void removeLike(User user) {
+    likedBy.remove(user);
   }
 }

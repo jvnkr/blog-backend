@@ -8,7 +8,7 @@ import org.jvnkr.blogbackend.entity.User;
 public class PostMapper {
   private static final int DESC_CHAR_LIMIT = 250;
 
-  public static PostDto toPreviewPostDto(Post post) {
+  public static PostDto toPreviewPostDto(Post post, User user) {
     User postAuthor = post.getUser();
     return new PostDto(
             post.getId(),
@@ -22,14 +22,14 @@ public class PostMapper {
             post.getTitle(),
             post.getDescription().length() > DESC_CHAR_LIMIT ?
                     post.getDescription().substring(0, DESC_CHAR_LIMIT) : post.getDescription(),
-            false,
+            post.getLikedBy().contains(user),
             post.getLikedBy().size(),
-            post.getComments().size(),
+            post.getTopLevelComments().size(),
             post.getDescription().length() > DESC_CHAR_LIMIT
     );
   }
 
-  public static PostDto toPostDto(Post post) {
+  public static PostDto toPostDto(Post post, User user) {
     User postAuthor = post.getUser();
     return new PostDto(
             post.getId(),
@@ -42,9 +42,9 @@ public class PostMapper {
             post.getCreatedAt(),
             post.getTitle(),
             post.getDescription(),
-            false,
+            post.getLikedBy().contains(user),
             post.getLikedBy().size(),
-            post.getComments().size(),
+            post.getTopLevelComments().size(),
             false
     );
   }
