@@ -70,7 +70,7 @@ public class AuthServiceImpl implements AuthService {
     Authentication authentication = jwtTokenProvider.getAuthentication(refreshToken);
     String newAccessToken = generateNewAccessToken(user, authentication, response);
 
-    return new SessionTokenDto(newAccessToken, user.getId(), user.getUsername(), user.getName(), user.isVerified());
+    return new SessionTokenDto(newAccessToken, user.getId(), user.getUsername(), user.getName(), Roles.getHighestRole(user.getRoles()), user.getEmail(), user.getBio(), user.isVerified());
   }
 
   @Override
@@ -99,7 +99,7 @@ public class AuthServiceImpl implements AuthService {
     } catch (JwtException e) {
       throw new APIException(HttpStatus.FORBIDDEN, "Failed to renew access token");
     }
-    return new SessionTokenDto(accessToken, user.getId(), user.getUsername(), user.getName(), user.isVerified());
+    return new SessionTokenDto(accessToken, user.getId(), user.getUsername(), user.getName(), Roles.getHighestRole(user.getRoles()), user.getEmail(), user.getBio(), user.isVerified());
   }
 
   @Override
@@ -185,7 +185,7 @@ public class AuthServiceImpl implements AuthService {
 
     String accessToken = jwtTokenProvider.generateAccessToken(user, authentication);
     String refreshToken = jwtTokenProvider.generateRefreshToken(user);
-    return new JwtAuthResponseDto(accessToken, refreshToken, user.getUsername(), user.getName(), user.getEmail(), user.getId(), user.isVerified());
+    return new JwtAuthResponseDto(accessToken, refreshToken, user.getUsername(), user.getName(), Roles.getHighestRole(user.getRoles()), user.getEmail(), user.getId(), user.getBio(), user.isVerified());
 
   }
 
@@ -230,6 +230,25 @@ public class AuthServiceImpl implements AuthService {
     refreshTokenCookie.setMaxAge(refreshTokenExpirationSeconds);
     response.addCookie(refreshTokenCookie);
 
-    return new JwtAuthResponseDto(accessToken, refreshToken, user.getUsername(), user.getName(), user.getEmail(), user.getId(), user.isVerified());
+    return new JwtAuthResponseDto(accessToken, refreshToken, user.getUsername(), user.getName(), Roles.getHighestRole(user.getRoles()), user.getEmail(), user.getId(), user.getBio(), user.isVerified());
+  }
+
+  @Override
+  public boolean logout(HttpServletResponse response) {
+    Cookie refreshTokenCookie = new Cookie("r_t", null);
+    refreshTokenCookie.setHttpOnly(true);
+    refreshTokenCookie.setSecure(false);
+    refreshTokenCookie.setPath("/");
+    refreshTokenCookie.setMaxAge(0);
+    response.addCookie(refreshTokenCookie);
+
+    Cookie accessTokenCookie = new Cookie("a_t", null);
+    accessTokenCookie.setHttpOnly(true);
+    accessTokenCookie.setSecure(false);
+    accessTokenCookie.setPath("/");
+    accessTokenCookie.setMaxAge(0);
+    response.addCookie(accessTokenCookie);
+
+    return true;
   }
 }

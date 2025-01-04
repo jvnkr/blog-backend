@@ -5,36 +5,52 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="416601d5-8005-4c74-9cb8-40a35f8b76d8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/RepliesToAuthorDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/utils/Pagination.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/controller/DashboardController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/controller/ReportController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/DashboardChartDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/DashboardDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/GetReportDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/GetReportsDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/ReportDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/ReportsDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/UpdateReportStatusDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/UserEditProfileDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/UserInfoDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/entity/Report.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/entity/ReportReason.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/mapper/ReportMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/repository/ReportRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/DashboardService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/ReportService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/ReportStatus.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/Reports.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/DashboardServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/ReportServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/dataSources/39c806a3-b981-49c8-9b0e-502f5a6fcc90.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/39c806a3-b981-49c8-9b0e-502f5a6fcc90.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/dataSources/39c806a3-b981-49c8-9b0e-502f5a6fcc90/storage_v2/_src_/database/blogapp.P4-6_g/schema/public.abK9xQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/39c806a3-b981-49c8-9b0e-502f5a6fcc90/storage_v2/_src_/database/blogapp.P4-6_g/schema/public.abK9xQ.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/blog-backend.iml" beforeDir="false" afterPath="$PROJECT_DIR$/blog-backend.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/config/SpringSecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/config/SpringSecurityConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/controller/AuthController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/controller/CommentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/controller/CommentController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/controller/PostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/controller/PostController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/CommentDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/CommentDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/controller/UserController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/JwtAuthResponseDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/JwtAuthResponseDto.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/SessionTokenDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/SessionTokenDto.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/UserProfileDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/UserProfileDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/entity/Comment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/entity/Comment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/entity/Post.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/entity/Post.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/mapper/CommentMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/mapper/CommentMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/mapper/PostMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/mapper/PostMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/entity/User.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/mapper/UserMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/mapper/UserMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/security/JwtAuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/security/JwtAuthenticationFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/repository/CommentRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/repository/CommentRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/repository/PostRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/repository/PostRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/repository/UserRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/AuthService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/CommentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/CommentService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/PostService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/PostService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/Roles.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/Roles.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/UserService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/AuthServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/AuthServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/CommentServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/CommentServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/PostServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/PostServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/additional-spring-configuration-metadata.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/additional-spring-configuration-metadata.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/UserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/UserServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,6 +60,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Interface" />
+        <option value="Enum" />
         <option value="Class" />
       </list>
     </option>
@@ -80,7 +98,7 @@
     <option name="myRunOnSave" value="true" />
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
+    <option name="selectedTabId" value="ProjectErrors" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
@@ -220,7 +238,14 @@
       <workItem from="1734388905911" duration="8802000" />
       <workItem from="1734634953876" duration="844000" />
       <workItem from="1734658367520" duration="247000" />
-      <workItem from="1734691731781" duration="13419000" />
+      <workItem from="1734691731781" duration="42576000" />
+      <workItem from="1735394489630" duration="756000" />
+      <workItem from="1735407044739" duration="627000" />
+      <workItem from="1735408544048" duration="2135000" />
+      <workItem from="1735507369106" duration="879000" />
+      <workItem from="1735508491372" duration="142000" />
+      <workItem from="1735644568125" duration="5126000" />
+      <workItem from="1735910619201" duration="19692000" />
     </task>
     <servers />
   </component>

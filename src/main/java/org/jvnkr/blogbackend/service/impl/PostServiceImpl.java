@@ -175,14 +175,10 @@ public class PostServiceImpl implements PostService {
   @Transactional
   @Override
   public boolean likePost(UUID postId, UUID userId) {
-    Optional<Post> postOpt = postRepository.findById(postId);
-    Optional<User> userOpt = userRepository.findById(userId);
-
-    if (postOpt.isEmpty()) throw new APIException(HttpStatus.NOT_FOUND, "Post not found");
-    if (userOpt.isEmpty()) throw new APIException(HttpStatus.NOT_FOUND, "User not found");
-
-    Post post = postOpt.get();
-    User user = userOpt.get();
+    Post post = postRepository.findByIdWithLock(postId)
+            .orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "Post not found"));
+    User user = userRepository.findById(userId)
+            .orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "User not found"));
 
     if (post.getLikedBy().contains(user)) {
       throw new APIException(HttpStatus.BAD_REQUEST, "You already liked the post");
@@ -196,14 +192,11 @@ public class PostServiceImpl implements PostService {
   @Transactional
   @Override
   public boolean unlikePost(UUID postId, UUID userId) {
-    Optional<Post> postOpt = postRepository.findById(postId);
-    Optional<User> userOpt = userRepository.findById(userId);
+    Post post = postRepository.findByIdWithLock(postId)
+            .orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "Post not found"));
+    User user = userRepository.findById(userId)
+            .orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "User not found"));
 
-    if (postOpt.isEmpty()) throw new APIException(HttpStatus.NOT_FOUND, "Post not found");
-    if (userOpt.isEmpty()) throw new APIException(HttpStatus.NOT_FOUND, "User not found");
-
-    Post post = postOpt.get();
-    User user = userOpt.get();
     if (!post.getLikedBy().contains(user)) {
       throw new APIException(HttpStatus.BAD_REQUEST, "You need to like the post first");
     }

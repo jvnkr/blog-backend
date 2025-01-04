@@ -8,6 +8,8 @@ public interface AuthService {
 
   JwtAuthResponseDto login(LoginDto loginDto, HttpServletResponse response);
 
+  boolean logout(HttpServletResponse response);
+
   SessionTokenDto validateSession(ValidateTokensDto validateTokensDto, HttpServletResponse response);
 
   JwtAuthResponseDto verifyRegister(VerifyRegisterDto verifyRegisterDto);

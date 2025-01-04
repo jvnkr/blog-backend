@@ -5,19 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.UUID;
-
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class SessionTokenDto {
-  private String accessToken;
-  private UUID userId;
-  private String username;
+@NoArgsConstructor
+public class UserInfoDto {
   private String name;
-  private String role;
-  private String email;
-  private String bio;
+  private String username;
   private boolean verified;
 }

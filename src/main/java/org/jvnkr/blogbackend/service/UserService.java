@@ -1,5 +1,6 @@
 package org.jvnkr.blogbackend.service;
 
+import org.jvnkr.blogbackend.dto.UserEditProfileDto;
 import org.jvnkr.blogbackend.dto.UserProfileDto;
 import org.jvnkr.blogbackend.dto.UserResponseDto;
 
@@ -13,5 +14,7 @@ public interface UserService {
 
   boolean unfollowUser(UUID viewerId, String username);
 
-  UserProfileDto getUserProfile(String username);
+  UserProfileDto getUserProfile(String username, UUID viewerId);
+
+  UserProfileDto editProfile(UUID viewerId, UserEditProfileDto newProfile);
 }

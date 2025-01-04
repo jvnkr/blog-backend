@@ -1,6 +1,7 @@
 package org.jvnkr.blogbackend.controller;
 
 import lombok.AllArgsConstructor;
+import org.jvnkr.blogbackend.dto.UserEditProfileDto;
 import org.jvnkr.blogbackend.dto.UserProfileDto;
 import org.jvnkr.blogbackend.dto.UserResponseDto;
 import org.jvnkr.blogbackend.security.CustomUserDetails;
@@ -29,19 +30,29 @@ public class UserController {
   @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
   @GetMapping("/follow/{username}")
   public ResponseEntity<Boolean> followUser(@PathVariable String username, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-    return ResponseEntity.status(HttpStatus.OK).body(userService.followUser(customUserDetails.getUserId(), username));
+    UUID viewerId = customUserDetails != null ? customUserDetails.getUserId() : null;
+    return ResponseEntity.status(HttpStatus.OK).body(userService.followUser(viewerId, username));
   }
 
   @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
   @GetMapping("/unfollow/{username}")
   public ResponseEntity<Boolean> unfollowUser(@PathVariable String username, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-    return ResponseEntity.status(HttpStatus.OK).body(userService.unfollowUser(customUserDetails.getUserId(), username));
+    UUID viewerId = customUserDetails != null ? customUserDetails.getUserId() : null;
+    return ResponseEntity.status(HttpStatus.OK).body(userService.unfollowUser(viewerId, username));
   }
 
   @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
   @GetMapping("/{username}")
-  public ResponseEntity<UserProfileDto> getUserProfile(@PathVariable String username) {
-    return ResponseEntity.status(HttpStatus.OK).body(userService.getUserProfile(username));
+  public ResponseEntity<UserProfileDto> getUserProfile(@PathVariable String username, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    UUID viewerId = customUserDetails != null ? customUserDetails.getUserId() : null;
+    return ResponseEntity.status(HttpStatus.OK).body(userService.getUserProfile(username, viewerId));
+  }
+
+  @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+  @PostMapping("/edit")
+  public ResponseEntity<UserProfileDto> editUserProfile(@RequestBody UserEditProfileDto userEditProfileDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    UUID viewerId = customUserDetails != null ? customUserDetails.getUserId() : null;
+    return ResponseEntity.status(HttpStatus.CREATED).body(userService.editProfile(viewerId, userEditProfileDto));
   }
 
 }

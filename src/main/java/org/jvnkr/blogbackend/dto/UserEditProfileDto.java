@@ -5,20 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.UUID;
-
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class JwtAuthResponseDto {
-  private String accessToken;
-  private String refreshToken;
+@NoArgsConstructor
+public class UserEditProfileDto {
   private String username;
   private String name;
-  private String role;
-  private String email;
-  private UUID userId;
   private String bio;
-  private boolean verified;
 }

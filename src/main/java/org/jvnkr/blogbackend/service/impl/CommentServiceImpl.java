@@ -62,6 +62,7 @@ public class CommentServiceImpl implements CommentService {
     return CommentMapper.toCommentDto(comment, user);
   }
 
+  @Transactional
   @Override
   public boolean likeComment(UUID commentId, UUID userId) {
     if (commentId == null) {
@@ -70,8 +71,8 @@ public class CommentServiceImpl implements CommentService {
     if (userId == null) {
       throw new APIException(HttpStatus.BAD_REQUEST, "Invalid payload: user id is required");
     }
+    Comment comment = commentRepository.findByIdWithLock(commentId).orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "Comment not found"));
     User user = userRepository.findById(userId).orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "User not found"));
-    Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "Comment not found"));
 
     if (comment.getLikedBy().contains(user)) {
       throw new APIException(HttpStatus.BAD_REQUEST, "Comment already liked by this user.");
@@ -82,6 +83,7 @@ public class CommentServiceImpl implements CommentService {
   }
 
 
+  @Transactional
   @Override
   public boolean unlikeComment(UUID commentId, UUID userId) {
     if (commentId == null) {
@@ -90,8 +92,8 @@ public class CommentServiceImpl implements CommentService {
     if (userId == null) {
       throw new APIException(HttpStatus.BAD_REQUEST, "Invalid payload: user id is required");
     }
+    Comment comment = commentRepository.findByIdWithLock(commentId).orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "Comment not found"));
     User user = userRepository.findById(userId).orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "User not found"));
-    Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "Comment not found"));
 
     if (!comment.getLikedBy().contains(user)) {
       throw new APIException(HttpStatus.BAD_REQUEST, "User has not liked this comment.");

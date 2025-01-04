@@ -19,4 +19,5 @@ public class UserProfileDto {
   private int followers;
   private int following;
   private Date createdAt;
+  private boolean isFollowingUser;
 }

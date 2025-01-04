@@ -47,21 +47,21 @@ public class SpringSecurityConfig {
   @Bean
   SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.csrf(AbstractHttpConfigurer::disable)
-        .cors(Customizer.withDefaults())
-        .authorizeHttpRequests((authorize) -> {
-          authorize.requestMatchers(HttpMethod.POST, "/api/v1/posts/batch").permitAll();
-          authorize.requestMatchers(HttpMethod.GET, "/api/v1/email/verify").permitAll();
-          authorize.requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll();
-          authorize.requestMatchers(HttpMethod.GET, "/api/auth/**").permitAll();
-          authorize.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
-          authorize.anyRequest().authenticated();
-        });
+            .cors(Customizer.withDefaults())
+            .authorizeHttpRequests((authorize) -> {
+              authorize.requestMatchers(HttpMethod.POST, "/api/v1/posts/batch").permitAll();
+              authorize.requestMatchers(HttpMethod.GET, "/api/v1/email/verify").permitAll();
+              authorize.requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll();
+              authorize.requestMatchers(HttpMethod.GET, "/api/auth/**").permitAll();
+              authorize.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
+              authorize.anyRequest().authenticated();
+            });
 
     // Allows Basic Auth (username:password)
     // http.httpBasic(Customizer.withDefaults());
 
     http.exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint)
-        .accessDeniedHandler(customAccessDeniedHandler));
+            .accessDeniedHandler(customAccessDeniedHandler));
 
     http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -70,19 +70,19 @@ public class SpringSecurityConfig {
 
   @Bean
   public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-      throws Exception {
+          throws Exception {
     return authenticationConfiguration.getAuthenticationManager();
   }
 
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
-    // configuration.setAllowedOrigins(List.of("http://localhost:3000"));
-    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+    configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
     configuration.setAllowedHeaders(List.of("*"));
     configuration.setAllowCredentials(true);
 
-    configuration.addAllowedOriginPattern("*"); // Allows any origin dynamically
+//    configuration.addAllowedOriginPattern("*"); // Allows any origin dynamically
 
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);

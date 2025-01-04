@@ -1,6 +1,7 @@
 package org.jvnkr.blogbackend.service.impl;
 
 import lombok.AllArgsConstructor;
+import org.jvnkr.blogbackend.dto.UserEditProfileDto;
 import org.jvnkr.blogbackend.dto.UserProfileDto;
 import org.jvnkr.blogbackend.dto.UserResponseDto;
 import org.jvnkr.blogbackend.entity.User;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -33,44 +33,52 @@ public class UserServiceImpl implements UserService {
   @Transactional
   @Override
   public boolean followUser(UUID viewerId, String username) {
-    Optional<User> userOpt = userRepository.findById(viewerId);
-    Optional<User> followerOpt = userRepository.findByUsernameOrEmail(username, null);
+    // Retrieve the users with locking for concurrency control
+    User user = userRepository.findByIdWithLock(viewerId)
+            .orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "User not found"));
 
-    if (userOpt.isEmpty()) throw new APIException(HttpStatus.NOT_FOUND, "User not found");
-    if (followerOpt.isEmpty()) throw new APIException(HttpStatus.NOT_FOUND, "Follower not found");
+    User follower = userRepository.findByUsernameOrEmailWithLock(username, null)
+            .orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "Follower not found"));
 
-    User user = userOpt.get();
-    User follower = followerOpt.get();
-    if (user.getId().equals(username)) {
+    // Prevent self-following
+    if (user.getUsername().equals(username)) {
       throw new APIException(HttpStatus.BAD_REQUEST, "You cannot follow yourself");
     }
 
-    if (user.getFollowers().add(follower)) {
-      userRepository.save(user);
+    // Add follower only if not already following
+    if (!follower.getFollowers().contains(user)) {
+      user.getFollowing().add(follower);
+      follower.getFollowers().add(user); // Maintain bidirectional relationship
+      userRepository.save(user);        // Save the 'user'
+      userRepository.save(follower);    // Save the 'follower' to persist changes in the reverse relationship
       return true;
     }
+
     throw new APIException(HttpStatus.BAD_REQUEST, "You already follow this user.");
   }
 
   @Transactional
   @Override
   public boolean unfollowUser(UUID viewerId, String username) {
-    Optional<User> userOpt = userRepository.findById(viewerId);
-    Optional<User> followerOpt = userRepository.findByUsernameOrEmail(username, null);
+    // Retrieve the users with locking for concurrency control
+    User user = userRepository.findByIdWithLock(viewerId)
+            .orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "User not found"));
 
-    if (userOpt.isEmpty()) throw new APIException(HttpStatus.NOT_FOUND, "User not found");
-    if (followerOpt.isEmpty()) throw new APIException(HttpStatus.NOT_FOUND, "Follower not found");
+    User follower = userRepository.findByUsernameOrEmailWithLock(username, null)
+            .orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "Follower not found"));
 
-    User user = userOpt.get();
-    User follower = followerOpt.get();
-    if (user.getId().equals(username)) {
+    // Prevent self-unfollowing
+    if (user.getUsername().equals(username)) {
       throw new APIException(HttpStatus.BAD_REQUEST, "You cannot unfollow yourself");
     }
 
-    if (user.getFollowers().remove(follower)) {
-      follower.getFollowing().remove(user);
-      userRepository.save(user);
-      userRepository.save(follower);
+    // Remove follower only if currently following
+    if (follower.getFollowers().contains(user)) {
+      user.getFollowing().remove(follower);
+      follower.getFollowers().remove(user); // Maintain bidirectional relationship
+
+      userRepository.save(user);           // Save the 'user'
+      userRepository.save(follower);       // Save the 'follower' to persist changes in the reverse relationship
       return true;
     }
 
@@ -78,15 +86,53 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public UserProfileDto getUserProfile(String username) {
-    Optional<User> userOpt = userRepository.findByUsernameOrEmail(username, null);
-    
-    UserProfileDto userProfileDto = userOpt.map(UserMapper::toUserProfileDto).orElse(null);
-    
-    if (userProfileDto == null) {
-      throw new APIException(HttpStatus.NOT_FOUND, "User not found");
+  public UserProfileDto getUserProfile(String username, UUID viewerId) {
+    User user = userRepository.findByUsernameOrEmail(username, null).orElse(null);
+    User viewer = userRepository.findById(viewerId).orElse(null);
+    if (viewer == null) {
+      throw new APIException(HttpStatus.BAD_REQUEST, "Viewer not found");
     }
-    return userProfileDto;
+    if (user == null) {
+      throw new APIException(HttpStatus.BAD_REQUEST, "User not found");
+    }
+
+    return UserMapper.toUserProfileDto(user, viewer);
   }
 
+  @Override
+  public UserProfileDto editProfile(UUID viewerId, UserEditProfileDto newProfile) {
+    User viewer = userRepository.findById(viewerId)
+            .orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "User not found"));
+
+    boolean hasUsernameChanged = isFieldChanged(newProfile.getUsername(), viewer.getUsername(), false);
+    boolean hasNameChanged = isFieldChanged(newProfile.getName(), viewer.getName(), false);
+    boolean hasBioChanged = isFieldChanged(newProfile.getBio(), viewer.getBio(), true);
+
+    if (!hasUsernameChanged && !hasNameChanged && !hasBioChanged) {
+      throw new APIException(HttpStatus.BAD_REQUEST, "At least one field must be different from the current value");
+    }
+
+    // Update fields only if they are changed and non-empty
+    if (hasUsernameChanged) {
+      viewer.setUsername(newProfile.getUsername().trim());
+    }
+    if (hasNameChanged) {
+      viewer.setName(newProfile.getName().trim());
+    }
+    if (hasBioChanged) {
+      if (newProfile.getBio().trim().length() > 1024) {
+        throw new APIException(HttpStatus.BAD_REQUEST, "Bio length must be lower than or equal to 1024 characters");
+      }
+      viewer.setBio(newProfile.getBio().trim());
+    }
+
+    userRepository.save(viewer);
+
+    return UserMapper.toUserProfileDto(viewer, null);
+  }
+
+  // Helper method to check if a field has changed and is non-empty
+  private boolean isFieldChanged(String newValue, String oldValue, boolean emptyAllowed) {
+    return newValue != null && (emptyAllowed || !newValue.trim().isEmpty()) && !newValue.trim().equals(oldValue);
+  }
 }
