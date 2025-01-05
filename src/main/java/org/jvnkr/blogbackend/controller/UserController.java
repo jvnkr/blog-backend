@@ -1,6 +1,7 @@
 package org.jvnkr.blogbackend.controller;
 
 import lombok.AllArgsConstructor;
+import org.jvnkr.blogbackend.dto.UserEditAccountDto;
 import org.jvnkr.blogbackend.dto.UserEditProfileDto;
 import org.jvnkr.blogbackend.dto.UserProfileDto;
 import org.jvnkr.blogbackend.dto.UserResponseDto;
@@ -53,6 +54,13 @@ public class UserController {
   public ResponseEntity<UserProfileDto> editUserProfile(@RequestBody UserEditProfileDto userEditProfileDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
     UUID viewerId = customUserDetails != null ? customUserDetails.getUserId() : null;
     return ResponseEntity.status(HttpStatus.CREATED).body(userService.editProfile(viewerId, userEditProfileDto));
+  }
+
+  @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+  @PostMapping("/edit/account")
+  public ResponseEntity<UserResponseDto> editUserAccount(@RequestBody UserEditAccountDto userEditAccountDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    UUID viewerId = customUserDetails != null ? customUserDetails.getUserId() : null;
+    return ResponseEntity.status(HttpStatus.CREATED).body(userService.editAccount(viewerId, userEditAccountDto));
   }
 
 }

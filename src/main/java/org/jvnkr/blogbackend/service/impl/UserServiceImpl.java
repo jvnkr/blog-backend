@@ -1,6 +1,7 @@
 package org.jvnkr.blogbackend.service.impl;
 
 import lombok.AllArgsConstructor;
+import org.jvnkr.blogbackend.dto.UserEditAccountDto;
 import org.jvnkr.blogbackend.dto.UserEditProfileDto;
 import org.jvnkr.blogbackend.dto.UserProfileDto;
 import org.jvnkr.blogbackend.dto.UserResponseDto;
@@ -10,6 +11,7 @@ import org.jvnkr.blogbackend.mapper.UserMapper;
 import org.jvnkr.blogbackend.repository.UserRepository;
 import org.jvnkr.blogbackend.service.UserService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
+  private final PasswordEncoder passwordEncoder;
 
   @Override
   public List<UserResponseDto> getAllUsers() {
@@ -129,6 +132,46 @@ public class UserServiceImpl implements UserService {
     userRepository.save(viewer);
 
     return UserMapper.toUserProfileDto(viewer, null);
+  }
+
+
+  @Override
+  public UserResponseDto editAccount(UUID viewerId, UserEditAccountDto newProfile) {
+    User viewer = userRepository.findById(viewerId)
+            .orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "User not found"));
+
+    boolean hasEmailChanged = isFieldChanged(newProfile.getEmail(), viewer.getEmail(), false);
+
+    if (!hasEmailChanged && newProfile.getPassword().isEmpty()) {
+      throw new APIException(HttpStatus.BAD_REQUEST, "At least one field must be filled");
+    }
+
+    if (!passwordEncoder.matches(newProfile.getCurrentPassword(), viewer.getPassword())) {
+      throw new APIException(HttpStatus.BAD_REQUEST, "Invalid current password");
+    }
+
+    if (passwordEncoder.matches(newProfile.getPassword(), viewer.getPassword())) {
+      throw new APIException(HttpStatus.BAD_REQUEST, "Cannot change current password to same one");
+    }
+
+    // Update fields only if they are changed and non-empty
+    if (hasEmailChanged) {
+      viewer.setEmail(newProfile.getEmail().trim());
+    }
+
+    if (!newProfile.getPassword().isEmpty() && newProfile.getConfirmPassword().isEmpty()) {
+      throw new APIException(HttpStatus.BAD_REQUEST, "Confirm password is missing");
+    }
+
+    if (!newProfile.getPassword().isEmpty() && !newProfile.getPassword().equals(newProfile.getConfirmPassword())) {
+      throw new APIException(HttpStatus.BAD_REQUEST, "Passwords do not match");
+    }
+
+    viewer.setPassword(passwordEncoder.encode(newProfile.getPassword()));
+
+    userRepository.save(viewer);
+
+    return UserMapper.toUserResponseDto(viewer);
   }
 
   // Helper method to check if a field has changed and is non-empty

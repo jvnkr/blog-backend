@@ -1,5 +1,6 @@
 package org.jvnkr.blogbackend.service;
 
+import org.jvnkr.blogbackend.dto.UserEditAccountDto;
 import org.jvnkr.blogbackend.dto.UserEditProfileDto;
 import org.jvnkr.blogbackend.dto.UserProfileDto;
 import org.jvnkr.blogbackend.dto.UserResponseDto;
@@ -17,4 +18,6 @@ public interface UserService {
   UserProfileDto getUserProfile(String username, UUID viewerId);
 
   UserProfileDto editProfile(UUID viewerId, UserEditProfileDto newProfile);
+
+  UserResponseDto editAccount(UUID viewerId, UserEditAccountDto newProfile);
 }
