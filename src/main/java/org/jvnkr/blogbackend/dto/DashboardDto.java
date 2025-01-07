@@ -16,6 +16,5 @@ public class DashboardDto {
   private int usersCount;
   private int reportsCount;
   private List<PostAuthorDto> topUsers;
-  private List<PostDto> topPosts;
   private List<DashboardChartDto> postsPerMonth;
 }

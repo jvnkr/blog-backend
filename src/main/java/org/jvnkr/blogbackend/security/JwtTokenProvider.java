@@ -1,8 +1,6 @@
 package org.jvnkr.blogbackend.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.jvnkr.blogbackend.dto.RegisterDto;
@@ -122,19 +120,25 @@ public class JwtTokenProvider {
   }
 
   public UUID getUserId(String token) {
-    Claims claims = Jwts.parser()
-            .setSigningKey(key())
-            .build()
-            .parseClaimsJws(token)
-            .getPayload();
+    try {
+      Claims claims = Jwts.parser()
+              .setSigningKey(key())
+              .build()
+              .parseClaimsJws(token)
+              .getPayload();
 
-    Object userIdObj = claims.get("userId");
-    if (userIdObj instanceof String) {
-      // Convert the String to UUID
-      return UUID.fromString((String) userIdObj);
-    } else {
-      throw new IllegalArgumentException("userId is not of type String");
+      Object userIdObj = claims.get("userId");
+      if (userIdObj instanceof String) {
+        // Convert the String to UUID
+        return UUID.fromString((String) userIdObj);
+      } else {
+        throw new IllegalArgumentException("userId is not of type String");
+      }
+    } catch (IllegalArgumentException e) {
+      logger.error(e.getMessage());
     }
+
+    return null;
   }
 
   private Claims getAllClaimsFromToken(String token) {
@@ -149,14 +153,27 @@ public class JwtTokenProvider {
   // Validate JWT Token
   public Claims validateToken(String token) {
     try {
+      // Parse JWT with key
       return Jwts.parser()
-              .setSigningKey(key())
+              .setSigningKey(key()) // Set the signing key
               .build()
-              .parseClaimsJws(token)
-              .getPayload();
+              .parseClaimsJws(token) // Parse token
+              .getBody(); // Retrieve the claims
 
-    } catch (JwtException e) {
-      logger.error("Error parsing JWT token: {}", e.getMessage(), e);
+    } catch (ExpiredJwtException e) {
+      logger.error("Token has expired: {}", e.getMessage(), e);
+      throw e;
+    } catch (UnsupportedJwtException e) {
+      logger.error("Unsupported JWT token: {}", e.getMessage(), e);
+      throw e;
+    } catch (MalformedJwtException e) {
+      logger.error("Malformed JWT token: {}", e.getMessage(), e);
+      throw e;
+    } catch (SecurityException e) {
+      logger.error("JWT signature validation failed: {}", e.getMessage(), e);
+      throw e;
+    } catch (IllegalArgumentException e) {
+      logger.error("JWT claims string is empty: {}", e.getMessage(), e);
       throw e;
     }
   }

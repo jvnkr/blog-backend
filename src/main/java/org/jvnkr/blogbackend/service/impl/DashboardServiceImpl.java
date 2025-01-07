@@ -14,7 +14,10 @@ import org.jvnkr.blogbackend.repository.ReportRepository;
 import org.jvnkr.blogbackend.repository.UserRepository;
 import org.jvnkr.blogbackend.service.DashboardService;
 import org.jvnkr.blogbackend.service.Roles;
+import org.jvnkr.blogbackend.utils.Pagination;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -53,10 +56,6 @@ public class DashboardServiceImpl implements DashboardService {
     int reportsCount = (int) reportRepository.count();
 
     List<PostAuthorDto> topUsers = postRepository.findTopUsersByPostsAndEngagement(PageRequest.of(0, 5));
-    List<Post> posts = postRepository.findTopPerformingPosts(PageRequest.of(0, 5));
-    List<PostDto> topPosts = posts.stream()
-            .map(post -> PostMapper.toPreviewPostDto(post, post.getUser()))
-            .toList();
 
     int currentYear = LocalDate.now().getYear();
     LocalDateTime startOfYear = LocalDateTime.of(currentYear, 1, 1, 0, 0, 0);
@@ -68,8 +67,19 @@ public class DashboardServiceImpl implements DashboardService {
             usersCount,
             reportsCount,
             topUsers,
-            topPosts,
             monthlyTopPosts
     );
+  }
+
+  @Override
+  public List<PostDto> getBatchOfDashoardPosts(int pageNumber, int batchSize) {
+    Pagination.validate(pageNumber, batchSize, null, userRepository);
+
+    Pageable pageable = PageRequest.of(pageNumber, batchSize, Sort.by(Sort.Direction.DESC, "createdAt"));
+    List<Post> posts = postRepository.findTopPerformingPosts(pageable);
+
+    return posts.stream()
+            .map(post -> PostMapper.toPreviewPostDto(post, null))
+            .toList();
   }
 }

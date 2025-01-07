@@ -134,7 +134,6 @@ public class UserServiceImpl implements UserService {
     return UserMapper.toUserProfileDto(viewer, null);
   }
 
-
   @Override
   public UserResponseDto editAccount(UUID viewerId, UserEditAccountDto newProfile) {
     User viewer = userRepository.findById(viewerId)
@@ -154,7 +153,6 @@ public class UserServiceImpl implements UserService {
       throw new APIException(HttpStatus.BAD_REQUEST, "Cannot change current password to same one");
     }
 
-    // Update fields only if they are changed and non-empty
     if (hasEmailChanged) {
       viewer.setEmail(newProfile.getEmail().trim());
     }

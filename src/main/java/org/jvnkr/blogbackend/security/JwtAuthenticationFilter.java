@@ -44,6 +44,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     String authHeader = request.getHeader("Authorization");
     String refreshToken = getRefreshToken(request);
+
+
     if (authHeader == null || !authHeader.startsWith("Bearer ") || refreshToken == null || refreshToken.isEmpty()) {
       filterChain.doFilter(request, response);
       return;
@@ -56,30 +58,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     try {
       jwtTokenProvider.validateToken(refreshToken);
 
-      if (accessToken != null) {
-        try {
-          if (jwtTokenProvider.validateToken(accessToken) != null) {
-            UUID accessTokenUserId = jwtTokenProvider.getUserId(accessToken);
-            logger.debug("Valid access token found");
+      if (accessToken != null && jwtTokenProvider.validateToken(accessToken) != null) {
+        UUID accessTokenUserId = jwtTokenProvider.getUserId(accessToken);
 
-            if (jwtTokenProvider.validateToken(refreshToken) != null) {
-              UUID refreshTokenUserId = jwtTokenProvider.getUserId(refreshToken);
-              if (!accessTokenUserId.equals(refreshTokenUserId)) {
-                throw new APIException(HttpStatus.UNAUTHORIZED, "Token user mismatch");
-              }
-            }
-
-            setAuthenticationContext(accessToken, request);
+        if (jwtTokenProvider.validateToken(refreshToken) != null) {
+          UUID refreshTokenUserId = jwtTokenProvider.getUserId(refreshToken);
+          if (!accessTokenUserId.equals(refreshTokenUserId)) {
+            throw new APIException(HttpStatus.UNAUTHORIZED, "Token user mismatch");
           }
-        } catch (ExpiredJwtException e) {
-          logger.error("Expired JWT Token: {}", e);
-          System.out.println("Expired token: " + accessToken);
-          throw new APIException(HttpStatus.UNAUTHORIZED, "Expired access token");
         }
+
+        setAuthenticationContext(accessToken, request);
+      } else {
+        throw new APIException(HttpStatus.UNAUTHORIZED, "Access token is missing or invalid");
       }
     } catch (ExpiredJwtException e) {
       logger.error("Expired JWT Token: {}", e);
-      throw new APIException(HttpStatus.UNAUTHORIZED, "Expired refresh token");
+//      throw new APIException(HttpStatus.UNAUTHORIZED, "Expired refresh token");
     } catch (SignatureException e) {
       throw new APIException(HttpStatus.UNAUTHORIZED, "Invalid access token");
     } catch (JwtException e) {

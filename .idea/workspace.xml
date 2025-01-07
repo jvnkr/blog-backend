@@ -5,12 +5,28 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="416601d5-8005-4c74-9cb8-40a35f8b76d8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/UserEditAccountDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/utils/AppEnvironments.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/39c806a3-b981-49c8-9b0e-502f5a6fcc90.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/39c806a3-b981-49c8-9b0e-502f5a6fcc90.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/39c806a3-b981-49c8-9b0e-502f5a6fcc90/storage_v2/_src_/database/blogapp.P4-6_g/schema/public.abK9xQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/39c806a3-b981-49c8-9b0e-502f5a6fcc90/storage_v2/_src_/database/blogapp.P4-6_g/schema/public.abK9xQ.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/BlogBackendApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/BlogBackendApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/config/SpringSecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/config/SpringSecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/controller/DashboardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/controller/DashboardController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/DashboardDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/DashboardDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/UserProfileDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/UserProfileDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/mapper/UserMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/mapper/UserMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/security/JwtAuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/security/JwtAuthenticationFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/security/JwtTokenProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/security/JwtTokenProvider.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/DashboardService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/DashboardService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/AuthServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/AuthServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/DashboardServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/DashboardServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/UserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/UserServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/additional-spring-configuration-metadata.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/additional-spring-configuration-metadata.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,8 +37,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Interface" />
-        <option value="Enum" />
         <option value="Class" />
+        <option value="Enum" />
+        <option value="Dockerfile" />
       </list>
     </option>
   </component>
@@ -73,6 +90,8 @@
     &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;Docker.blogbackend.postgres: Compose Deployment.executor&quot;: &quot;Run&quot;,
     &quot;Docker.resources.postgres: Compose Deployment.executor&quot;: &quot;Run&quot;,
+    &quot;Maven.blog-backend [org.apache.maven.plugins:maven-compiler-plugin:3.8.1:compile].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.blog-backend [org.apache.maven.plugins:maven-compiler-plugin:3.8.1:testCompile].executor&quot;: &quot;Run&quot;,
     &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
     &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
     &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
@@ -104,7 +123,6 @@
   <component name="RunManager" selected="Spring Boot.BlogBackendApplication">
     <configuration name="BlogBackendApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <option name="ALTERNATIVE_JRE_PATH" value="22" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
       <module name="blog-backend" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="org.jvnkr.blogbackend.BlogBackendApplication" />
@@ -149,8 +167,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-28b599e66164-intellij.indexing.shared.core-IU-242.23726.103" />
-        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-IU-242.23726.103" />
+        <option value="bundled-jdk-9823dce3aa75-28b599e66164-intellij.indexing.shared.core-IU-242.24807.4" />
+        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-IU-242.24807.4" />
       </set>
     </attachedChunks>
   </component>
@@ -206,7 +224,11 @@
       <workItem from="1735508491372" duration="142000" />
       <workItem from="1735644568125" duration="5126000" />
       <workItem from="1735910619201" duration="19692000" />
-      <workItem from="1736021807065" duration="4721000" />
+      <workItem from="1736021807065" duration="17330000" />
+      <workItem from="1736169635990" duration="673000" />
+      <workItem from="1736170323022" duration="402000" />
+      <workItem from="1736170755688" duration="14460000" />
+      <workItem from="1736214490789" duration="334000" />
     </task>
     <servers />
   </component>

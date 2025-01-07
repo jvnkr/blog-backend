@@ -23,6 +23,7 @@ public class UserMapper {
             user.getFollowers().size(),
             user.getFollowing().size(),
             user.getCreatedAt(),
+            user.getPosts().size(),
             user.getFollowers().contains(viewer)
     );
   }

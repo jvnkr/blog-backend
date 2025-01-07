@@ -82,6 +82,10 @@ public class AuthServiceImpl implements AuthService {
     String refreshToken = validateTokensDto.getRefreshToken();
     String accessToken = validateTokensDto.getAccessToken();
 
+    if (refreshToken == null || refreshToken.trim().isEmpty()) {
+      throw new APIException(HttpStatus.BAD_REQUEST, "Invalid payload: refresh token is required");
+    }
+
     if (jwtTokenProvider.validateToken(refreshToken) == null || refreshToken.trim().isEmpty()) {
       throw new APIException(HttpStatus.FORBIDDEN, "Refresh Token expired or invalid");
     }

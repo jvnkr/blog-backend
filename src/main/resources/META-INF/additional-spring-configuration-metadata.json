@@ -18,7 +18,7 @@
     {
       "name": "app.resend-api-key",
       "type": "java.lang.String",
-      "description": "API Key for the Resend email app."
+      "description": "API Key for the Resend Email App."
     },
     {
       "name": "app.jwt-verify-expiration-milliseconds",
@@ -28,7 +28,7 @@
     {
       "name": "app.environment",
       "type": "java.lang.String",
-      "description": "Development or production environment."
+      "description": "`Development` or `production` environment."
     },
     {
       "name": "app.jwt-access-expiration-seconds",

@@ -77,19 +77,34 @@ public class SpringSecurityConfig {
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+
+    configuration.setAllowedOrigins(List.of(
+            "http://localhost:3000",
+            "http://127.0.0.1:3000"
+    ));
+
+    configuration.setAllowedOriginPatterns(List.of(
+            "http://192.168.0.*:3000",
+            "http://192.168.1.*:3000",
+            "http://192.168.100.*:3000",
+            "http://10.0.0.*:3000"
+    ));
+
+    // Specify allowed methods
     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+
+    // Specify allowed headers
     configuration.setAllowedHeaders(List.of("*"));
+
+    // Allow credentials
     configuration.setAllowCredentials(true);
 
-//    configuration.addAllowedOriginPattern("*"); // Allows any origin dynamically
-
+    // Register the configuration for all paths
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
 
     return source;
   }
-
   // In-Memory Authentication
   // @Bean
   // public UserDetailsService userDetailsService() {
