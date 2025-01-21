@@ -53,6 +53,9 @@ public class AuthServiceImpl implements AuthService {
   @Value("${app.resend-api-key}")
   private String resendKey;
 
+  @Value("${app.resend-domain}")
+  private String resendDomain;
+
   @Autowired
   public AuthServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder,
                          AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, EmailServiceImpl emailService) {
@@ -140,7 +143,7 @@ public class AuthServiceImpl implements AuthService {
       throw new APIException(HttpStatus.BAD_REQUEST, "Email already exists!");
     }
 
-    if (!resendKey.isEmpty() && environment.equalsIgnoreCase(AppEnvironments.PROD.getEnvName())) {
+    if (!resendDomain.isEmpty() && !resendKey.isEmpty() && environment.equalsIgnoreCase(AppEnvironments.PROD.getEnvName())) {
       emailService.sendVerificationEmail(registerDto.getEmail().trim(), registerDto);
     } else {
       return createUser(registerDto);

@@ -39,6 +39,11 @@
       "name": "app.jwt-refresh-expiration-seconds",
       "type": "java.lang.Integer",
       "description": "Description for app.jwt-access-expiration-seconds."
+    },
+    {
+      "name": "app.resend-domain",
+      "type": "java.lang.String",
+      "description": "Description for app.resend-domain."
     }
   ]
 }

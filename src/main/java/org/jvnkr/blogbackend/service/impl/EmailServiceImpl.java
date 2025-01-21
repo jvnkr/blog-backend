@@ -20,6 +20,9 @@ public class EmailServiceImpl implements EmailService {
   @Value("${app.resend-api-key}")
   private String resendKey;
 
+  @Value("${app.resend-domain}")
+  private String resendDomain;
+
   private static final Logger logger = LoggerFactory.getLogger(EmailServiceImpl.class);
 
   @Autowired
@@ -33,7 +36,6 @@ public class EmailServiceImpl implements EmailService {
     try {
       Resend resend = new Resend(resendKey);
 
-
       String token = jwtTokenProvider.generateVerifyToken(registerDto);
 
       String encodedToken;
@@ -45,7 +47,7 @@ public class EmailServiceImpl implements EmailService {
 
       String verificationLink = "http://localhost:8080/api/v1/email/verify?t=" + encodedToken;
 
-      String from = "Blogify <hello@jvnkr.com>";
+      String from = "Blogify <hello@" + resendDomain + ">";
       String subject = "Verify your email address";
 
       String htmlContent = "<p>You know the drill. Click the link below to verify your email address.</p>"
