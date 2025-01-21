@@ -24,8 +24,8 @@ public class AuthController {
 
   @PostMapping("/login")
   public ResponseEntity<JwtAuthResponseDto> login(
-          @RequestBody LoginDto userDto,
-          HttpServletResponse response) {
+      @RequestBody LoginDto userDto,
+      HttpServletResponse response) {
     JwtAuthResponseDto tokens = authService.login(userDto, response);
 
     return ResponseEntity.status(HttpStatus.OK).body(tokens);
@@ -33,7 +33,8 @@ public class AuthController {
 
   @PostMapping("/session")
   public ResponseEntity<SessionTokenDto> validate(@CookieValue(value = "a_t", defaultValue = " ") String accessToken,
-                                                  @CookieValue(value = "r_t", defaultValue = " ") String refreshToken, HttpServletResponse response, HttpServletRequest request) {
+      @CookieValue(value = "r_t", defaultValue = " ") String refreshToken, HttpServletResponse response,
+      HttpServletRequest request) {
     if (refreshToken.isEmpty()) {
       throw new APIException(HttpStatus.BAD_REQUEST, "Refresh Token is required");
     }

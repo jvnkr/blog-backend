@@ -47,22 +47,23 @@ public class SpringSecurityConfig {
   @Bean
   SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.csrf(AbstractHttpConfigurer::disable)
-            .cors(Customizer.withDefaults())
-            .authorizeHttpRequests((authorize) -> {
-              authorize.requestMatchers(HttpMethod.POST, "/api/v1/posts/batch").permitAll();
-              authorize.requestMatchers(HttpMethod.GET, "/api/v1/email/verify").permitAll();
-              authorize.requestMatchers(HttpMethod.GET, "/api/v1/health").permitAll();
-              authorize.requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll();
-              authorize.requestMatchers(HttpMethod.GET, "/api/auth/**").permitAll();
-              authorize.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
-              authorize.anyRequest().authenticated();
-            });
+        .cors(Customizer.withDefaults())
+        .authorizeHttpRequests((authorize) -> {
+          authorize.requestMatchers(HttpMethod.POST, "/api/v1/posts/batch").permitAll();
+          authorize.requestMatchers(HttpMethod.GET, "/api/v1/email/verify").permitAll();
+          authorize.requestMatchers(HttpMethod.GET, "/api/v1/health").permitAll();
+          authorize.requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll();
+          authorize.requestMatchers(HttpMethod.OPTIONS, "/api/auth/**").permitAll();
+          authorize.requestMatchers(HttpMethod.GET, "/api/auth/**").permitAll();
+          authorize.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
+          authorize.anyRequest().authenticated();
+        });
 
     // Allows Basic Auth (username:password)
     // http.httpBasic(Customizer.withDefaults());
 
     http.exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint)
-            .accessDeniedHandler(customAccessDeniedHandler));
+        .accessDeniedHandler(customAccessDeniedHandler));
 
     http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -71,7 +72,7 @@ public class SpringSecurityConfig {
 
   @Bean
   public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-          throws Exception {
+      throws Exception {
     return authenticationConfiguration.getAuthenticationManager();
   }
 
@@ -80,16 +81,14 @@ public class SpringSecurityConfig {
     CorsConfiguration configuration = new CorsConfiguration();
 
     configuration.setAllowedOrigins(List.of(
-            "http://localhost:3000",
-            "http://127.0.0.1:3000"
-    ));
+        "http://localhost:3000",
+        "http://127.0.0.1:3000"));
 
     configuration.setAllowedOriginPatterns(List.of(
-            "http://192.168.0.*:3000",
-            "http://192.168.1.*:3000",
-            "http://192.168.100.*:3000",
-            "http://10.0.0.*:3000"
-    ));
+        "http://192.168.0.*:3000",
+        "http://192.168.1.*:3000",
+        "http://192.168.100.*:3000",
+        "http://10.0.0.*:3000"));
 
     // Specify allowed methods
     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
