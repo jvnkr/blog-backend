@@ -1,15 +1,15 @@
 package org.jvnkr.blogbackend.service.impl;
 
 import lombok.AllArgsConstructor;
-import org.jvnkr.blogbackend.dto.UserEditAccountDto;
-import org.jvnkr.blogbackend.dto.UserEditProfileDto;
-import org.jvnkr.blogbackend.dto.UserProfileDto;
-import org.jvnkr.blogbackend.dto.UserResponseDto;
+import org.jvnkr.blogbackend.dto.*;
 import org.jvnkr.blogbackend.entity.User;
 import org.jvnkr.blogbackend.exception.APIException;
 import org.jvnkr.blogbackend.mapper.UserMapper;
 import org.jvnkr.blogbackend.repository.UserRepository;
 import org.jvnkr.blogbackend.service.UserService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -90,13 +90,13 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public UserProfileDto getUserProfile(String username, UUID viewerId) {
-    User user = userRepository.findByUsernameOrEmail(username, null).orElse(null);
-    User viewer = userRepository.findById(viewerId).orElse(null);
+    User user = userRepository.findByUsernameOrEmail(username, null).orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "User not found"));
+    User viewer = userRepository.findById(viewerId).orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "Viewer not found"));
     if (viewer == null) {
-      throw new APIException(HttpStatus.BAD_REQUEST, "Viewer not found");
+      throw new APIException(HttpStatus.NOT_FOUND, "Viewer not found");
     }
     if (user == null) {
-      throw new APIException(HttpStatus.BAD_REQUEST, "User not found");
+      throw new APIException(HttpStatus.NOT_FOUND, "User not found");
     }
 
     return UserMapper.toUserProfileDto(user, viewer);
@@ -170,6 +170,40 @@ public class UserServiceImpl implements UserService {
     userRepository.save(viewer);
 
     return UserMapper.toUserResponseDto(viewer);
+  }
+
+  @Override
+  public List<UserInfoDto> searchUsers(String query) {
+    Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
+    int limit = pageable.getPageSize();
+    int offset = (int) pageable.getOffset();
+
+    if (query.length() < 3) {
+      // using a simple ILIKE search for very short queries
+      List<User> users = userRepository.findByUsernameOrNameContainingIgnoreCase(query, pageable);
+      return users.stream().map(UserMapper::toUserInfoDto).collect(Collectors.toList());
+    }
+
+    // using the fuzzy search for longer queries
+    List<User> users = userRepository.fuzzySearchUsers(query, limit, offset, (float) 0.1);
+    return users.stream().map(UserMapper::toUserInfoDto).collect(Collectors.toList());
+  }
+
+  @Override
+  public List<UserInfoDto> searchUsersPaginated(String query, int pageNumber, int batchSize) {
+    Pageable pageable = PageRequest.of(pageNumber, batchSize, Sort.by(Sort.Direction.DESC, "createdAt"));
+    int limit = pageable.getPageSize();
+    int offset = (int) pageable.getOffset();
+
+    if (query.length() < 3) {
+      // using a simple ILIKE search for very short queries
+      List<User> users = userRepository.findByUsernameOrNameContainingIgnoreCase(query, pageable);
+      return users.stream().map(UserMapper::toUserInfoDto).collect(Collectors.toList());
+    }
+
+    // using the fuzzy search for longer queries
+    List<User> users = userRepository.fuzzySearchUsers(query, limit, offset, (float) 0.1);
+    return users.stream().map(UserMapper::toUserInfoDto).collect(Collectors.toList());
   }
 
   // Helper method to check if a field has changed and is non-empty

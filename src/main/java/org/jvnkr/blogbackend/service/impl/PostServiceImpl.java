@@ -235,7 +235,7 @@ public class PostServiceImpl implements PostService {
     else viewer = null;
 
 
-    Pageable pageable = PageRequest.of(pageNumber, batchSize, Sort.by(Sort.Direction.DESC, "createdAt"));
+    Pageable pageable = PageRequest.of(pageNumber, batchSize, Sort.by(Sort.Direction.DESC, "created_at"));
     Page<Post> postPage = postRepository.findPostsByFollowedUsers(viewerId, pageable);
     List<Post> posts = postPage.getContent();
 
@@ -244,5 +244,26 @@ public class PostServiceImpl implements PostService {
                     PostMapper.toPreviewPostDto(post, viewer)
             )
             .collect(Collectors.toList());
+  }
+
+  @Override
+  public List<PostDto> searchPosts(String query, int pageNumber, int batchSize, UUID viewerId) {
+    User viewer;
+    if (viewerId != null) viewer = userRepository.findById(viewerId).orElse(null);
+    else viewer = null;
+
+    Pageable pageable = PageRequest.of(pageNumber, batchSize, Sort.by(Sort.Direction.DESC, "createdAt"));
+    int limit = pageable.getPageSize();
+    int offset = (int) pageable.getOffset();
+
+    if (query.length() < 3) {
+      // using a simple ILIKE search for very short queries
+      List<Post> posts = postRepository.findByTitleOrDescContainingIgnoreCase(query, pageable);
+      return posts.stream().map(post -> PostMapper.toPreviewPostDto(post, viewer)).collect(Collectors.toList());
+    }
+
+    // using the fuzzy search for longer queries
+    List<Post> posts = postRepository.fuzzySearchPosts(query, limit, offset, (float) 0.1);
+    return posts.stream().map(post -> PostMapper.toPreviewPostDto(post, viewer)).collect(Collectors.toList());
   }
 }

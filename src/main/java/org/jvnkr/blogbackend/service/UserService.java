@@ -1,9 +1,6 @@
 package org.jvnkr.blogbackend.service;
 
-import org.jvnkr.blogbackend.dto.UserEditAccountDto;
-import org.jvnkr.blogbackend.dto.UserEditProfileDto;
-import org.jvnkr.blogbackend.dto.UserProfileDto;
-import org.jvnkr.blogbackend.dto.UserResponseDto;
+import org.jvnkr.blogbackend.dto.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,4 +17,8 @@ public interface UserService {
   UserProfileDto editProfile(UUID viewerId, UserEditProfileDto newProfile);
 
   UserResponseDto editAccount(UUID viewerId, UserEditAccountDto newProfile);
+
+  List<UserInfoDto> searchUsers(String query);
+
+  List<UserInfoDto> searchUsersPaginated(String query, int pageNumber, int batchSize);
 }

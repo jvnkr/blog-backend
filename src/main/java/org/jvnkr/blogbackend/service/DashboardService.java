@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface DashboardService {
-  DashboardDto getDashboard(UUID viewerId);
+  DashboardDto getDashboard(int year, UUID viewerId);
 
   List<PostDto> getBatchOfDashoardPosts(int pageNumber, int batchSize);
 }

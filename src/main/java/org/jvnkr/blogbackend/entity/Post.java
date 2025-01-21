@@ -26,7 +26,7 @@ public class Post {
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
-  @Column(name = "title", nullable = false, length = 50)
+  @Column(name = "title", nullable = false, length = 100)
   private String title;
 
   @Column(name = "description", nullable = false, columnDefinition = "TEXT")
@@ -51,11 +51,6 @@ public class Post {
     return comments.stream()
             .filter(comment -> comment.getParentComment() == null)
             .collect(Collectors.toSet());
-  }
-
-  // Getter for total number of all comments (including replies)
-  public int getTotalComments() {
-    return comments.size();
   }
 
   @ManyToMany(fetch = FetchType.LAZY)

@@ -20,5 +20,6 @@ public class JwtAuthResponseDto {
   private String email;
   private UUID userId;
   private String bio;
+  private boolean sentEmail;
   private boolean verified;
 }

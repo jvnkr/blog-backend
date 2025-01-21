@@ -15,6 +15,7 @@ import org.jvnkr.blogbackend.security.JwtTokenProvider;
 import org.jvnkr.blogbackend.service.AuthService;
 import org.jvnkr.blogbackend.service.EmailService;
 import org.jvnkr.blogbackend.service.Roles;
+import org.jvnkr.blogbackend.utils.AppEnvironments;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -48,6 +49,9 @@ public class AuthServiceImpl implements AuthService {
 
   @Value("${app.jwt-refresh-expiration-seconds}")
   private int refreshTokenExpirationSeconds;
+
+  @Value("${app.resend-api-key}")
+  private String resendKey;
 
   @Autowired
   public AuthServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder,
@@ -136,11 +140,10 @@ public class AuthServiceImpl implements AuthService {
       throw new APIException(HttpStatus.BAD_REQUEST, "Email already exists!");
     }
 
-    // Prod only
-    if (environment.equals("prod")) {
+    if (!resendKey.isEmpty() && environment.equalsIgnoreCase(AppEnvironments.PROD.getEnvName())) {
       emailService.sendVerificationEmail(registerDto.getEmail().trim(), registerDto);
     } else {
-      createUser(registerDto);
+      return createUser(registerDto);
     }
 
     return null;
@@ -189,8 +192,7 @@ public class AuthServiceImpl implements AuthService {
 
     String accessToken = jwtTokenProvider.generateAccessToken(user, authentication);
     String refreshToken = jwtTokenProvider.generateRefreshToken(user);
-    return new JwtAuthResponseDto(accessToken, refreshToken, user.getUsername(), user.getName(), Roles.getHighestRole(user.getRoles()), user.getEmail(), user.getId(), user.getBio(), user.isVerified());
-
+    return new JwtAuthResponseDto(accessToken, refreshToken, user.getUsername(), user.getName(), Roles.getHighestRole(user.getRoles()), user.getEmail(), user.getId(), user.getBio(), false, user.isVerified());
   }
 
   @Override
@@ -203,10 +205,10 @@ public class AuthServiceImpl implements AuthService {
                       registerClaims.get("password").toString(),
                       registerClaims.get("name").toString(),
                       registerClaims.get("email").toString()
-              ));
+              )
+      );
     } catch (JwtException e) {
       throw new APIException(HttpStatus.BAD_REQUEST, "Invalid token");
-
     }
   }
 
@@ -234,7 +236,7 @@ public class AuthServiceImpl implements AuthService {
     refreshTokenCookie.setMaxAge(refreshTokenExpirationSeconds);
     response.addCookie(refreshTokenCookie);
 
-    return new JwtAuthResponseDto(accessToken, refreshToken, user.getUsername(), user.getName(), Roles.getHighestRole(user.getRoles()), user.getEmail(), user.getId(), user.getBio(), user.isVerified());
+    return new JwtAuthResponseDto(accessToken, refreshToken, user.getUsername(), user.getName(), Roles.getHighestRole(user.getRoles()), user.getEmail(), user.getId(), user.getBio(), false, user.isVerified());
   }
 
   @Override

@@ -1,10 +1,7 @@
 package org.jvnkr.blogbackend.controller;
 
 import lombok.AllArgsConstructor;
-import org.jvnkr.blogbackend.dto.UserEditAccountDto;
-import org.jvnkr.blogbackend.dto.UserEditProfileDto;
-import org.jvnkr.blogbackend.dto.UserProfileDto;
-import org.jvnkr.blogbackend.dto.UserResponseDto;
+import org.jvnkr.blogbackend.dto.*;
 import org.jvnkr.blogbackend.security.CustomUserDetails;
 import org.jvnkr.blogbackend.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -21,11 +18,24 @@ import java.util.UUID;
 @RequestMapping("/api/v1/users")
 public class UserController {
   private UserService userService;
+  final int GLOBAL_BATCH_SIZE = 3;
 
   @PreAuthorize("hasRole('ADMIN')")
   @GetMapping()
   public ResponseEntity<List<UserResponseDto>> getAllUsers() {
     return ResponseEntity.status(HttpStatus.OK).body(userService.getAllUsers());
+  }
+
+  @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+  @GetMapping("/search")
+  public ResponseEntity<List<UserInfoDto>> searchUsers(@RequestParam("q") String query) {
+    return ResponseEntity.status(HttpStatus.OK).body(userService.searchUsers(query));
+  }
+
+  @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+  @PostMapping("/search")
+  public ResponseEntity<List<UserInfoDto>> searchUsersPaginated(@RequestParam("q") String query, @RequestParam("filter") String filter, @RequestBody PageNumberDto pageNumberDto) {
+    return ResponseEntity.status(HttpStatus.OK).body(userService.searchUsersPaginated(query, pageNumberDto.getPageNumber(), filter.equalsIgnoreCase("posts") ? 3 : GLOBAL_BATCH_SIZE));
   }
 
   @PreAuthorize("hasAnyRole('USER', 'ADMIN')")

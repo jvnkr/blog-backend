@@ -5,27 +5,36 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="416601d5-8005-4c74-9cb8-40a35f8b76d8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/utils/AppEnvironments.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/controller/HealthController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/DashboardBarChartDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/GetDashboardDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/TopUserDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/dataSources/39c806a3-b981-49c8-9b0e-502f5a6fcc90.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/39c806a3-b981-49c8-9b0e-502f5a6fcc90.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/dataSources/39c806a3-b981-49c8-9b0e-502f5a6fcc90/storage_v2/_src_/database/blogapp.P4-6_g/schema/public.abK9xQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/39c806a3-b981-49c8-9b0e-502f5a6fcc90/storage_v2/_src_/database/blogapp.P4-6_g/schema/public.abK9xQ.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/BlogBackendApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/BlogBackendApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/config/SpringSecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/config/SpringSecurityConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/controller/DashboardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/controller/DashboardController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/controller/PostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/controller/PostController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/controller/UserController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/DashboardDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/DashboardDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/UserProfileDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/UserProfileDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/JwtAuthResponseDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/dto/JwtAuthResponseDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/entity/Post.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/entity/Post.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/entity/User.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/mapper/UserMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/mapper/UserMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/security/JwtAuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/security/JwtAuthenticationFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/security/JwtTokenProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/security/JwtTokenProvider.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/repository/CommentRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/repository/CommentRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/repository/PostRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/repository/PostRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/repository/UserRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/DashboardService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/DashboardService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/PostService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/PostService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/UserService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/AuthServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/AuthServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/CommentServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/CommentServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/DashboardServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/DashboardServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/EmailServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/EmailServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/PostServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/PostServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/UserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jvnkr/blogbackend/service/impl/UserServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/additional-spring-configuration-metadata.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/additional-spring-configuration-metadata.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -37,9 +46,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Interface" />
-        <option value="Class" />
         <option value="Enum" />
         <option value="Dockerfile" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -111,7 +120,7 @@
     &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.35402298&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;actions.on.save&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.SQL:2016, Generic&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -228,7 +237,14 @@
       <workItem from="1736169635990" duration="673000" />
       <workItem from="1736170323022" duration="402000" />
       <workItem from="1736170755688" duration="14460000" />
-      <workItem from="1736214490789" duration="334000" />
+      <workItem from="1736214490789" duration="1531000" />
+      <workItem from="1736217802241" duration="9208000" />
+      <workItem from="1736695187582" duration="5638000" />
+      <workItem from="1736745209836" duration="2177000" />
+      <workItem from="1736870359361" duration="5576000" />
+      <workItem from="1736908186217" duration="1987000" />
+      <workItem from="1736978761021" duration="12965000" />
+      <workItem from="1737325191434" duration="1155000" />
     </task>
     <servers />
   </component>

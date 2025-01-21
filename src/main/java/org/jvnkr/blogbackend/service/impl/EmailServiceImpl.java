@@ -45,7 +45,7 @@ public class EmailServiceImpl implements EmailService {
 
       String verificationLink = "http://localhost:8080/api/v1/email/verify?t=" + encodedToken;
 
-      String from = "Blogify <hello@edizen.agency>";
+      String from = "Blogify <hello@jvnkr.com>";
       String subject = "Verify your email address";
 
       String htmlContent = "<p>You know the drill. Click the link below to verify your email address.</p>"
@@ -55,7 +55,7 @@ public class EmailServiceImpl implements EmailService {
               + "<p>If you have any trouble with the button, you can copy and paste the link below into your browser:</p>"
               + "<p><a href=\"" + verificationLink + "\">" + verificationLink + "</a></p>"
               + "<p>© 2024 Blogify, LLC.<br>"
-              + "<p>8100 Podgorica, Montenegro</p>";
+              + "<p>81000 Podgorica, Montenegro</p>";
 
       CreateEmailOptions params = CreateEmailOptions.builder()
               .from(from)

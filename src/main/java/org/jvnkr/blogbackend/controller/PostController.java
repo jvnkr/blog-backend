@@ -28,6 +28,13 @@ public class PostController {
             .body(postService.createPost(postDto.getTitle(), postDto.getDescription(), customUserDetails.getUserId()));
   }
 
+  @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+  @PostMapping("/search")
+  public ResponseEntity<List<PostDto>> searchPostsPaginated(@RequestParam("q") String query, @RequestParam("filter") String filter, @RequestBody PageNumberDto pageNumberDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    UUID viewerId = customUserDetails != null ? customUserDetails.getUserId() : null;
+    return ResponseEntity.status(HttpStatus.OK).body(postService.searchPosts(query, pageNumberDto.getPageNumber(), filter.equalsIgnoreCase("users") ? 3 : GLOBAL_BATCH_SIZE, viewerId));
+  }
+
   @GetMapping
   public ResponseEntity<List<PostDto>> getAllPosts() {
     return ResponseEntity.status(HttpStatus.OK).body(postService.getAllPosts());

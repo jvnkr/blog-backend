@@ -103,6 +103,31 @@ public class CommentServiceImpl implements CommentService {
     return true;
   }
 
+  private void deleteRepliesToRecursively(Comment comment) {
+    // Find all replies to this comment
+    List<Comment> replies = commentRepository.findByRepliesToComment(comment);
+    for (Comment reply : replies) {
+      // Recursively delete replies of replies
+      deleteRepliesToRecursively(reply);
+
+      // Delete the reply
+      commentRepository.delete(reply);
+    }
+  }
+
+
+  private void deleteParentComRecursively(Comment comment) {
+    // Find all replies to this comment
+    List<Comment> replies = commentRepository.findByParentComment(comment);
+    for (Comment reply : replies) {
+      // Recursively delete replies of replies
+      deleteParentComRecursively(reply);
+
+      // Delete the reply
+      commentRepository.delete(reply);
+    }
+  }
+
   @Transactional
   @Override
   public String removeComment(UUID commentId, UUID userId) {
@@ -126,13 +151,19 @@ public class CommentServiceImpl implements CommentService {
             .orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "User not found"));
 
     if (!user.getId().equals(comment.getUser().getId())) {
-      throw new APIException(HttpStatus.FORBIDDEN, "Comment does not beUUID to this user.");
+      throw new APIException(HttpStatus.FORBIDDEN, "Comment does not belong to this user.");
     }
 
-    Post post = comment.getPost();
-    post.removeComment(comment);
+    deleteRepliesToRecursively(comment);
+    deleteParentComRecursively(comment);
 
-    // Orphan removal will take care of deleting child comments (replies)
+    // Remove from post
+    Post post = comment.getPost();
+    if (post != null) {
+      post.removeComment(comment);
+    }
+
+    // Finally, delete the comment itself
     commentRepository.delete(comment);
 
     return "Comment removed successfully.";

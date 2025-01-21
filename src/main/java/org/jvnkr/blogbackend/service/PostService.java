@@ -25,4 +25,6 @@ public interface PostService {
   List<PostDto> getBatchOfAllPosts(int pageNumber, int batchSize, UUID viewerId);
 
   List<PostDto> getBatchOfAllFollowingPosts(int pageNumber, int batchSize, UUID viewerId);
+
+  List<PostDto> searchPosts(String query, int pageNumber, int batchSize, UUID viewerId);
 }

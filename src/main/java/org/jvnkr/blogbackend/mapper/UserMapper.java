@@ -1,8 +1,6 @@
 package org.jvnkr.blogbackend.mapper;
 
-import org.jvnkr.blogbackend.dto.UserInfoDto;
-import org.jvnkr.blogbackend.dto.UserProfileDto;
-import org.jvnkr.blogbackend.dto.UserResponseDto;
+import org.jvnkr.blogbackend.dto.*;
 import org.jvnkr.blogbackend.entity.User;
 
 public class UserMapper {
@@ -12,6 +10,19 @@ public class UserMapper {
             user.getName(),
             user.getEmail()
     );
+  }
+
+  public static TopUserDto toTopUserDto(User user) {
+    return new TopUserDto(
+            new PostAuthorDto(
+                    user.getId(),
+                    user.getName(),
+                    user.getUsername(),
+                    user.isVerified()
+            ),
+            user.getPosts().size()
+    );
+
   }
 
   public static UserProfileDto toUserProfileDto(User user, User viewer) {

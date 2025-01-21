@@ -51,6 +51,7 @@ public class SpringSecurityConfig {
             .authorizeHttpRequests((authorize) -> {
               authorize.requestMatchers(HttpMethod.POST, "/api/v1/posts/batch").permitAll();
               authorize.requestMatchers(HttpMethod.GET, "/api/v1/email/verify").permitAll();
+              authorize.requestMatchers(HttpMethod.GET, "/api/v1/health").permitAll();
               authorize.requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll();
               authorize.requestMatchers(HttpMethod.GET, "/api/auth/**").permitAll();
               authorize.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();

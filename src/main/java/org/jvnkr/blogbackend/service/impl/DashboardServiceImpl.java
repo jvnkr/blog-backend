@@ -3,12 +3,13 @@ package org.jvnkr.blogbackend.service.impl;
 import lombok.AllArgsConstructor;
 import org.jvnkr.blogbackend.dto.DashboardChartDto;
 import org.jvnkr.blogbackend.dto.DashboardDto;
-import org.jvnkr.blogbackend.dto.PostAuthorDto;
 import org.jvnkr.blogbackend.dto.PostDto;
+import org.jvnkr.blogbackend.dto.TopUserDto;
 import org.jvnkr.blogbackend.entity.Post;
 import org.jvnkr.blogbackend.entity.User;
 import org.jvnkr.blogbackend.exception.APIException;
 import org.jvnkr.blogbackend.mapper.PostMapper;
+import org.jvnkr.blogbackend.mapper.UserMapper;
 import org.jvnkr.blogbackend.repository.PostRepository;
 import org.jvnkr.blogbackend.repository.ReportRepository;
 import org.jvnkr.blogbackend.repository.UserRepository;
@@ -34,7 +35,7 @@ public class DashboardServiceImpl implements DashboardService {
   private final ReportRepository reportRepository;
 
   @Override
-  public DashboardDto getDashboard(UUID viewerId) {
+  public DashboardDto getDashboard(int year, UUID viewerId) {
     if (viewerId == null) {
       throw new APIException(HttpStatus.BAD_REQUEST, "Viewer ID must not be null");
     }
@@ -55,17 +56,22 @@ public class DashboardServiceImpl implements DashboardService {
     int usersCount = (int) userRepository.count();
     int reportsCount = (int) reportRepository.count();
 
-    List<PostAuthorDto> topUsers = postRepository.findTopUsersByPostsAndEngagement(PageRequest.of(0, 5));
+    List<User> users = postRepository.findTopUsersByPostsAndEngagement(PageRequest.of(0, 5));
+
+    List<TopUserDto> topUsers = users.stream().map(UserMapper::toTopUserDto).toList();
+
+    LocalDateTime startOfYear = LocalDateTime.of(year, 1, 1, 0, 0, 0);
+    LocalDateTime endOfYear = LocalDateTime.of(year, 12, 31, 23, 59, 59);
+    List<DashboardChartDto> monthlyTopPosts = postRepository.findPostCountsForCurrentYear(startOfYear, endOfYear);
 
     int currentYear = LocalDate.now().getYear();
-    LocalDateTime startOfYear = LocalDateTime.of(currentYear, 1, 1, 0, 0, 0);
-    LocalDateTime endOfYear = LocalDateTime.of(currentYear, 12, 31, 23, 59, 59);
-    List<DashboardChartDto> monthlyTopPosts = postRepository.findPostCountsForCurrentYear(startOfYear, endOfYear);
+    int earliestYear = postRepository.findYearOfOldestPost().orElse(currentYear);
 
     return new DashboardDto(
             postsCount,
             usersCount,
             reportsCount,
+            earliestYear,
             topUsers,
             monthlyTopPosts
     );
