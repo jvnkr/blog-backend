@@ -74,7 +74,8 @@ public class PostServiceImpl implements PostService {
       throw new APIException(HttpStatus.BAD_REQUEST, "Invalid payload: title or description is required");
     }
 
-    Post post = postRepository.findById(postId).orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "Invalid payload: post not found"));
+    Post post = postRepository.findById(postId)
+        .orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "Invalid payload: post not found"));
 
     if (!post.getUser().getId().equals(userId)) {
       throw new APIException(HttpStatus.BAD_REQUEST, "Invalid payload: invalid post owner");
@@ -88,15 +89,18 @@ public class PostServiceImpl implements PostService {
       description = description.trim();
     }
 
-    if (title != null && title.equals(post.getTitle()) && description != null && description.equals(post.getDescription())) {
+    if (title != null && title.equals(post.getTitle()) && description != null
+        && description.equals(post.getDescription())) {
       throw new APIException(HttpStatus.CONFLICT, "Invalid payload: same title and description");
     }
 
-    if (title != null && !title.isEmpty() && post.getTitle().equals(title) && (description == null || description.isEmpty())) {
+    if (title != null && !title.isEmpty() && post.getTitle().equals(title)
+        && (description == null || description.isEmpty())) {
       throw new APIException(HttpStatus.CONFLICT, "Invalid payload: same title");
     }
 
-    if (description != null && !description.isEmpty() && post.getDescription().equals(description) && (title == null || title.isEmpty())) {
+    if (description != null && !description.isEmpty() && post.getDescription().equals(description)
+        && (title == null || title.isEmpty())) {
       throw new APIException(HttpStatus.CONFLICT, "Invalid payload: same description");
     }
 
@@ -122,7 +126,8 @@ public class PostServiceImpl implements PostService {
       throw new APIException(HttpStatus.BAD_REQUEST, "Invalid payload: user id is required");
     }
 
-    Post post = postRepository.findById(postId).orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "Invalid payload: post not found"));
+    Post post = postRepository.findById(postId)
+        .orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "Invalid payload: post not found"));
 
     if (!post.getUser().getId().equals(userId)) {
       throw new APIException(HttpStatus.BAD_REQUEST, "Invalid payload: invalid post owner");
@@ -138,7 +143,8 @@ public class PostServiceImpl implements PostService {
       throw new APIException(HttpStatus.NOT_FOUND, "Post not found");
     }
     User viewer;
-    if (viewerId != null) viewer = userRepository.findById(viewerId).orElse(null);
+    if (viewerId != null)
+      viewer = userRepository.findById(viewerId).orElse(null);
     else {
       throw new APIException(HttpStatus.BAD_REQUEST, "Viewer not found");
     }
@@ -152,7 +158,8 @@ public class PostServiceImpl implements PostService {
     Pagination.validate(pageNumber, batchSize, viewerId, userRepository);
 
     User viewer;
-    if (viewerId != null) viewer = userRepository.findById(viewerId).orElse(null);
+    if (viewerId != null)
+      viewer = userRepository.findById(viewerId).orElse(null);
     else {
       throw new APIException(HttpStatus.BAD_REQUEST, "Viewer not found");
     }
@@ -166,19 +173,17 @@ public class PostServiceImpl implements PostService {
     List<Post> posts = postPage.getContent();
 
     return posts.stream()
-            .map((post ->
-                    PostMapper.toPreviewPostDto(post, viewer)
-            ))
-            .collect(Collectors.toList());
+        .map((post -> PostMapper.toPreviewPostDto(post, viewer)))
+        .collect(Collectors.toList());
   }
 
   @Transactional
   @Override
   public boolean likePost(UUID postId, UUID userId) {
     Post post = postRepository.findByIdWithLock(postId)
-            .orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "Post not found"));
+        .orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "Post not found"));
     User user = userRepository.findById(userId)
-            .orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "User not found"));
+        .orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "User not found"));
 
     if (post.getLikedBy().contains(user)) {
       throw new APIException(HttpStatus.BAD_REQUEST, "You already liked the post");
@@ -193,9 +198,9 @@ public class PostServiceImpl implements PostService {
   @Override
   public boolean unlikePost(UUID postId, UUID userId) {
     Post post = postRepository.findByIdWithLock(postId)
-            .orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "Post not found"));
+        .orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "Post not found"));
     User user = userRepository.findById(userId)
-            .orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "User not found"));
+        .orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "User not found"));
 
     if (!post.getLikedBy().contains(user)) {
       throw new APIException(HttpStatus.BAD_REQUEST, "You need to like the post first");
@@ -211,46 +216,46 @@ public class PostServiceImpl implements PostService {
     Pagination.validate(pageNumber, batchSize, null, userRepository);
 
     User viewer;
-    if (viewerId != null) viewer = userRepository.findById(viewerId).orElse(null);
-    else viewer = null;
+    if (viewerId != null)
+      viewer = userRepository.findById(viewerId).orElse(null);
+    else
+      viewer = null;
 
     Pageable pageable = PageRequest.of(pageNumber, batchSize, Sort.by(Sort.Direction.DESC, "createdAt"));
     Page<Post> postPage = postRepository.findAll(pageable);
     List<Post> posts = postPage.getContent();
 
     return posts.stream()
-            .map(post ->
-                    PostMapper.toPreviewPostDto(post, viewer)
-            )
-            .collect(Collectors.toList());
+        .map(post -> PostMapper.toPreviewPostDto(post, viewer))
+        .collect(Collectors.toList());
   }
-
 
   @Override
   public List<PostDto> getBatchOfAllFollowingPosts(int pageNumber, int batchSize, UUID viewerId) {
     Pagination.validate(pageNumber, batchSize, null, userRepository);
 
     User viewer;
-    if (viewerId != null) viewer = userRepository.findById(viewerId).orElse(null);
-    else viewer = null;
+    if (viewerId != null)
+      viewer = userRepository.findById(viewerId).orElse(null);
+    else
+      viewer = null;
 
-
-    Pageable pageable = PageRequest.of(pageNumber, batchSize, Sort.by(Sort.Direction.DESC, "created_at"));
+    Pageable pageable = PageRequest.of(pageNumber, batchSize, Sort.by(Sort.Direction.DESC, "createdAt"));
     Page<Post> postPage = postRepository.findPostsByFollowedUsers(viewerId, pageable);
     List<Post> posts = postPage.getContent();
 
     return posts.stream()
-            .map(post ->
-                    PostMapper.toPreviewPostDto(post, viewer)
-            )
-            .collect(Collectors.toList());
+        .map(post -> PostMapper.toPreviewPostDto(post, viewer))
+        .collect(Collectors.toList());
   }
 
   @Override
   public List<PostDto> searchPosts(String query, int pageNumber, int batchSize, UUID viewerId) {
     User viewer;
-    if (viewerId != null) viewer = userRepository.findById(viewerId).orElse(null);
-    else viewer = null;
+    if (viewerId != null)
+      viewer = userRepository.findById(viewerId).orElse(null);
+    else
+      viewer = null;
 
     Pageable pageable = PageRequest.of(pageNumber, batchSize, Sort.by(Sort.Direction.DESC, "createdAt"));
     int limit = pageable.getPageSize();
